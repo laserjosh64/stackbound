@@ -193,6 +193,10 @@ PRIZE COUNTER (pass 16, outside runs)
   Buying something equips it. Leaving the screen puts back whatever you have equipped.
   The currency is called Tickets because Tokens are already the skip rewards inside a run.
 
+NEW IN PASS 33
+  - Bag fixes on PC: right-clicking to turn a new piece no longer places it too, and a click places
+    the piece where you clicked, even if the mouse moves on straight away.
+
 NEW IN PASS 32
   - Stackbound installs as a phone app from any web host: app icon (the title's S, built from its
     pieces), full screen, offline play, and updates that arrive on their own. See INSTALL IT AS A

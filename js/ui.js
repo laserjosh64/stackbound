@@ -1770,7 +1770,8 @@
     // double-tap window has passed, so a double-tap never places by accident.
     let placeTimer = null, lastUp = null;
     cv.onpointerup = (e) => {
-      if (!ghostMode) return;
+      // only the main button places: a right-click turns the piece and must not drop it too
+      if (!ghostMode || e.button !== 0) return;
       const r = cv.getBoundingClientRect();
       const x = Math.floor(((e.clientX - r.left) / r.width) * 10), y = Math.floor(((e.clientY - r.top) / r.height) * 10);
       const turn = lastUp && e.timeStamp - lastUp.t < BAG_DOUBLE_TAP && Math.abs(lastUp.x - x) <= 1 && Math.abs(lastUp.y - y) <= 1;
@@ -1781,7 +1782,8 @@
       UI.bagHover = { x, y };
       if (fresh && e.pointerType !== 'mouse') { draw(); SB.audio.play('rotate'); return; }
       const m = UI.bagMode;
-      placeTimer = setTimeout(() => { if (UI.bagMode === m && $('#bagcv') === cv) UI.bagClick(); }, BAG_DOUBLE_TAP);
+      // it lands where it was clicked, even if the mouse has moved on before the double-click window closes
+      placeTimer = setTimeout(() => { if (UI.bagMode === m && $('#bagcv') === cv) { UI.bagHover = { x, y }; draw(); UI.bagClick(); } }, BAG_DOUBLE_TAP);
     };
     cv.onclick = () => { if (!ghostMode) UI.bagClick(); };
     draw();
