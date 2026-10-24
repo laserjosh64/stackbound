@@ -107,7 +107,7 @@
   });
   L.push({
     id: 'looks', ico: 'gem', title: 'Reading a piece', kind: 'read',
-    lead: 'Specials, behaviours and materials each change how a piece is built. Here is the whole set.',
+    lead: 'Specials, behaviours and materials each change how a piece is built. A piece holds one of each, so a new material replaces the old one. Here is the whole set.',
     gallery: true,
     body: () => {
       const item = (o, name, desc) => `<div class="tut-look"><canvas class="tut-look-cv" width="104" height="76" data-look="${esc(JSON.stringify(o))}"></canvas><div><b>${esc(name)}</b><div class="dim small">${esc(desc)}</div></div></div>`;

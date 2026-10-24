@@ -193,6 +193,19 @@ PRIZE COUNTER (pass 16, outside runs)
   Buying something equips it. Leaving the screen puts back whatever you have equipped.
   The currency is called Tickets because Tokens are already the skip rewards inside a run.
 
+NEW IN PASS 34
+  - Workshop: a Last Stack button opens the score breakdown of every clear from the Stack you just
+    finished (it is saved with the run, so it is still there after Continue).
+  - Phone Bag: the pieces are listed on the left; tap one and its details open on the right with Move
+    and Remove. With nothing picked, that side shows the Bag's numbers. On phones, Glyphs and the
+    Forge show the piece first and do it from a button there. Short landscape screens get the same
+    columns beside the Bag.
+  - Materials, Specials and Behaviours are tagged with their kind wherever they are described. A piece
+    holds one of each.
+  - Before a Material replaces one a piece already has (Gild and the other material Glyphs, The Egg,
+    Transmute), the game asks first and shows what goes and what takes its place. While choosing, each
+    piece is marked Adds, Replaces or Already.
+
 NEW IN PASS 33
   - Bag fixes on PC: right-clicking to turn a new piece no longer places it too, and a click places
     the piece where you clicked, even if the mouse moves on straight away.

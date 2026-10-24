@@ -42,15 +42,23 @@
   const tipBlueprint = (id) => `<b>Schematic: ${SB.BLUEPRINTS[id].name}</b><div>${esc(SB.BLUEPRINTS[id].desc)}</div>`;
   const consTip = (c) => {
     const i = Run.consInfo(c);
-    return `<b>${i.icon} ${esc(i.name)}</b><div class="tip-sub">${i.family}${i.live ? ' · LIVE (use mid-Stack)' : ''}</div><div>${esc(i.desc)}</div>`;
+    const m = consMat(c);
+    return `<b>${i.icon} ${esc(i.name)}</b><div class="tip-sub">${i.family}${i.live ? ' · LIVE (use mid-Stack)' : ''}</div><div>${esc(i.desc)}</div>${m ? `<div class="tip-kind">${kindTag('mat')} ${m === 'all' ? 'Replaces every Material in your Bag' : 'Replaces a Material the piece already has'}</div>` : ''}`;
   };
+  // A piece carries at most one of each kind: a new one replaces the old one of the same kind and sits
+  // alongside the other kinds. Each is tagged with its kind wherever it is described.
+  const KIND_NAME = { mat: 'Material', special: 'Special', behavior: 'Behaviour' };
+  const kindTag = (k) => `<span class="mod-kind mk-${k}">${KIND_NAME[k]}</span>`;
+  const matName = (m) => `<span class="mat" style="color:${SB.MATERIALS[m].color}">${SB.MATERIALS[m].name}</span>`;
   const pieceDesc = (p) => {
     const parts = [];
-    if (p.mat) parts.push(`<span class="mat" style="color:${SB.MATERIALS[p.mat].color}">${SB.MATERIALS[p.mat].name}</span>: ${esc(SB.MATERIALS[p.mat].desc)}`);
-    if (p.special) { const s = SB.SPECIALS[p.special]; parts.push(`${s.icon} <b>${s.name}</b> (${s.scope}): ${esc(s.desc(SB.specialVal(p.special, SB.pieceLv(p))))}`); }
-    if (p.behavior) { const b = SB.BEHAVIORS[p.behavior]; parts.push(`${b.icon} <b>${b.name}</b>: ${esc(b.desc)}`); }
-    return parts.join('<br>');
+    if (p.special) { const s = SB.SPECIALS[p.special]; parts.push(`<div class="pd-line">${kindTag('special')} ${s.icon} <b>${s.name}</b> (${s.scope}): ${esc(s.desc(SB.specialVal(p.special, SB.pieceLv(p))))}</div>`); }
+    if (p.behavior) { const b = SB.BEHAVIORS[p.behavior]; parts.push(`<div class="pd-line">${kindTag('behavior')} ${b.icon} <b>${b.name}</b>: ${esc(b.desc)}</div>`); }
+    if (p.mat) parts.push(`<div class="pd-line">${kindTag('mat')} ${matName(p.mat)}: ${esc(SB.MATERIALS[p.mat].desc)}</div>`);
+    return parts.join('');
   };
+  // what a Pocket item does to a piece's Material, if anything: a Glyph that sets one, or Transmute
+  const consMat = (c) => (c.kind === 'glyph' ? (SB.GLYPHS[c.id] && SB.GLYPHS[c.id].mat ? 'one' : null) : c.kind !== 'pattern' && c.kind !== 'secret' && c.id === 'transmute' ? 'all' : null);
   const trackText = (shape) => {
     switch (shape) {
       case 'I': return 'Lv5: +40 Mass on Tetrises. Lv10: Tetrises with it score x2. Lv15: x2 Charge';
@@ -71,7 +79,7 @@
   UI.lvBadge = (p) => `<span class="lv t${SB.lvTier(SB.pieceLv(p))}${p.forged ? ' forged' : ''}">Lv${SB.pieceLv(p)}</span>`;
   const tipPiece = (p, rate) => {
     const sh = SB.SHAPES[p.shape];
-    return `<b style="color:${sh.color}">${esc(sh.name)}</b> <span class="tip-sub">${levelText(p)}${p.banned ? ' · BANNED' : ''}${rate !== undefined ? ' · ' + (rate * 100).toFixed(1) + '%' : ''}</span><div class="tip-sub">${sh.group} · ${sh.n} cells</div>${forgedText(p)}${pieceDesc(p) ? '<div>' + pieceDesc(p) + '</div>' : ''}<div class="tip-sub">${esc(trackText(p.shape))}</div>`;
+    return `<b style="color:${sh.color}">${esc(sh.name)}</b> <span class="tip-sub">${levelText(p)}${p.banned ? ' · BANNED' : ''}${rate !== undefined ? ' · ' + (rate * 100).toFixed(1) + '%' : ''}</span><div class="tip-sub">${sh.group} · ${sh.n} cells</div>${forgedText(p)}${pieceDesc(p)}<div class="tip-sub">${esc(trackText(p.shape))}</div>`;
   };
   UI.tip = (html) => `data-tip="${esc(html)}"`;
 
@@ -167,11 +175,12 @@
     for (let i = run.consumables.length; i < Run.consSlots(run); i++) cons += '<div class="cons-slot empty"></div>';
     const tc = Run.tagCounts(run);
     const trans = Object.keys(SB.TRANSFORMATIONS).filter((t) => (tc[t] || 0) >= 3).map((t) => `<span class="trans" ${UI.tip(`<b>${SB.TRANSFORMATIONS[t].name}</b><div>${esc(SB.TRANSFORMATIONS[t].desc)}</div>`)}>${SB.uiIco('star')} ${SB.TRANSFORMATIONS[t].name}</span>`).join('');
+    const last = mode === 'shop' && run.lastScores;
     return `<div class="hud">
-      <div class="hud-left">
+      <div class="hud-left ${last ? 'n4' : ''}">
         <div class="money">$${run.money}</div>
         <div class="hud-meta">Floor <b>${run.ante}</b>${run.endless ? ' (Endless)' : '/8'} · ${SB.STARTERS[run.starter].name} · <span ${UI.tip(`<b>${SB.STAKES[run.stake].name}</b><div>${esc(SB.STAKES[run.stake].desc)}</div>`)}>${run.stake >= 10 ? 'Hellscape' : 'Hazard ' + run.stake}</span></div>
-        <div class="hud-btns"><button data-act="openBag">${SB.uiIco('bag')} Bag</button><button data-act="openBoard">${SB.uiIco('board')} Board</button><button data-act="openLevels">${SB.uiIco('levels')} Run info</button></div>
+        <div class="hud-btns"><button data-act="openBag">${SB.uiIco('bag')} Bag</button><button data-act="openBoard">${SB.uiIco('board')} Board</button><button data-act="openLevels">${SB.uiIco('levels')} Run info</button>${last ? `<button data-act="lastStack">${SB.uiIco('papers')} Last Stack</button>` : ''}</div>
         ${trans ? '<div class="trans-row">' + trans + '</div>' : ''}
       </div>
       <div class="hud-loadout">
@@ -734,7 +743,7 @@
     const consCards = s.cons.map((it, i) => {
       const inf = Run.consInfo(it);
       return `<div class="shop-card tilt cons-card fam-${inf.family} ${it.sold ? 'sold' : ''} ${poor(it)}" ${card(it, 'c' + i)} ${UI.tip(consTip(it))} ${it.sold ? '' : `data-act="buyCons" data-i="${i}"`}>
-        ${saleTag(it)}<div class="sc-rar">${inf.family}</div><div class="big-icon">${inf.art || inf.icon}</div><div class="sc-name">${esc(inf.name)}</div><div class="sc-desc">${esc(inf.desc)}</div>
+        ${saleTag(it)}<div class="sc-rar">${inf.family}</div><div class="big-icon">${inf.art || inf.icon}</div><div class="sc-name">${esc(inf.name)}</div><div class="sc-desc">${consMat(it) ? kindTag('mat') + ' ' : ''}${esc(inf.desc)}</div>
         <div class="price">${priceTag(it)}</div></div>`;
     }).join('');
     const packCards = s.packs.map((it, i) => {
@@ -765,6 +774,7 @@
             <button class="big primary rail-next" data-act="nextStack">Next Stack ${SB.glyph('next')}</button>
             <button class="big rail-reroll" data-act="reroll" ${run.money < rc ? 'disabled' : ''}>${SB.uiIco('dice')} Restock <b>${rc === 0 ? 'FREE' : '$' + rc}</b></button>
             <button class="rail-forge" data-act="forge" ${UI.tip('<b>Forge</b><div>+1 level to a piece for the rest of the run. Each forge doubles the price until you leave this Workshop. Bonuses unlock at Lv5, Lv10 and Lv15.</div>')}>${SB.uiIco('hammer')} Forge<span class="long"> a piece</span> <b class="${run.money < Run.forgePrice(run) ? 'neg' : 'gold'}">$${Run.forgePrice(run)}</b></button>
+            ${run.lastScores ? `<button class="rail-last" data-act="lastStack">${SB.uiIco('papers')} Last Stack</button>` : ''}
           </div>
         </div>
         <div class="shop-main ${s.relics.length + s.cons.length >= 6 || s.packs.length + (pt ? 1 : 0) + (bp ? 1 : 0) >= 6 ? 'crowded' : ''}">
@@ -1103,7 +1113,7 @@
         <div><h3>3. Hit the target</h3><p>Each Stack has a score target. Every Stack has a 5:00 clock: reach the target before it runs out. Then play freezes: <b>Bank</b> your winnings, or <b>Push On</b>. A push resets your score to 0, adds 1:00 to the clock and sets a fresh goal (60%, then 90%, then 130% of the target) for bigger rewards. Top out or run out of time while pushing and the run ends.</p></div>
         <div><h3>4. Climb the Tower</h3><p>The Tower has 8 Floors. Each Floor is Stack I, Stack II and a Warden. Stacks roll a modifier; Wardens break one rule of Tetris. Clear Floor 8 to reach the Summit. You can skip Stack I or II for a Token. In Endless, some Wardens bring a <b>Rival</b>: a stacker that plays a little faster than your best this run. You score nothing until you bury it in garbage.</p></div>
         <div><h3>5. The Workshop</h3><p>Between Stacks, spend money on <b>Curios</b> (up to 5, they fire left to right), <b>Patterns</b> (level up a clear type), <b>Glyphs</b> (reshape pieces and the board; LIVE ones fire mid-Stack with keys 1-4), <b>Rifts</b> (power with a price), packs, Bag patches and Schematics. Stock changes every visit.</p></div>
-        <div><h3>6. The Bag</h3><p>You only get pieces that fit in your Bag. Pieces level up to 15, with a bonus at Lv5, Lv10 and Lv15. Levels last the whole run, except the ones from the Forge special and Gilded Bag cells, which wear off when the Floor ends. Special pieces carry powers like Coin, Drill or Catalyst. Throwing a piece out costs money, more each time.</p></div>
+        <div><h3>6. The Bag</h3><p>You only get pieces that fit in your Bag. Pieces level up to 15, with a bonus at Lv5, Lv10 and Lv15. Levels last the whole run, except the ones from the Forge special and Gilded Bag cells, which wear off when the Floor ends. Special pieces carry powers like Coin, Drill or Catalyst. A piece holds one Special, one Behaviour and one Material, so a new Material replaces the one it has (you are asked first). Throwing a piece out costs money, more each time.</p></div>
         <div><h3>7. The board remembers</h3><p>Board Packs inscribe cells (Gold, Prism, Echo, Cracked...) onto your board for the whole run. When a line clears through one, a badge pops off it showing what it added. Build where your lines clear.</p></div>
         <div><h3>8. Money</h3><p>You earn the Stack reward, a speed bonus for beating par, Push On bonuses, and Savings: $1 for every $${SB.ECON.savePer} you hold (max $${SB.ECON.saveCap}). Lean builds get rich; greedy ones get crushed.</p></div>
       </div>
@@ -1550,7 +1560,7 @@
     // keep this Stack's clears for the score breakdown (newest last)
     if (UI.scoreHistGame !== UI.game) { UI.scoreHistGame = UI.game; UI.scoreHist = []; }
     UI.scoreHist.push(t);
-    if (UI.scoreHist.length > 20) UI.scoreHist.shift();
+    if (UI.scoreHist.length > 40) UI.scoreHist.shift();
     const chipsEl = $('#tChips'), multEl = $('#tMult'), nameEl = $('#tName'), logEl = $('#tLog');
     if (!chipsEl) return;
     const box = $('#tally');
@@ -1579,13 +1589,18 @@
     });
   };
 
-  // the score breakdown: every step of a clear's Mass x Charge in order, with the running totals
+  // the score breakdown: every step of a clear's Mass x Charge in order, with the running totals.
+  // UI.scoreLogLast: the finished Stack's clears (from the Workshop) instead of this Stack's
+  const scoreLogHist = () => (UI.scoreLogLast ? ((UI.run && UI.run.lastScores) || {}).clears || [] : UI.scoreHistGame === UI.game ? UI.scoreHist : []);
   UI.openScoreLog = function () {
-    const hist = UI.scoreHistGame === UI.game ? UI.scoreHist : [];
+    const hist = scoreLogHist(), L = UI.scoreLogLast && UI.run.lastScores;
     const n = hist.length, i = SB.clamp(UI.scoreLogAt || 0, 0, Math.max(0, n - 1)), t = hist[i];
     const done = '<div class="menu-row"><button class="primary" data-act="closeModal">Done</button></div>';
-    if (!t) return UI.openModal(`<h1>Last score</h1><p class="sl-none">No clears yet this Stack</p>${done}`, 'score-modal');
-    const nav = n > 1 ? `<div class="sl-nav"><button data-act="scoreLogStep" data-step="-1" aria-label="Earlier clear" ${i ? '' : 'disabled'}>${SB.glyph('left')}</button><span>Clear ${i + 1} of ${n}</span><button data-act="scoreLogStep" data-step="1" aria-label="Later clear" ${i < n - 1 ? '' : 'disabled'}>${SB.glyph('right')}</button></div>` : '';
+    const where = L ? `<div class="sl-stack">Floor ${L.ante} · ${esc(L.name)} · scored ${fmt(L.score)}</div>` : '';
+    if (!t) return UI.openModal(`<h1>${L ? 'Last Stack' : 'Last score'}</h1>${where}<p class="sl-none">${L ? 'No clears that Stack' : 'No clears yet this Stack'}</p>${done}`, 'score-modal');
+    const top = Math.max(...hist.map((h) => h.score || 0));
+    const best = n > 1 && top > 0 && i === hist.findIndex((h) => (h.score || 0) === top) ? '<span class="sl-best">Best</span>' : '';
+    const nav = n > 1 ? `<div class="sl-nav"><button data-act="scoreLogStep" data-step="-1" aria-label="Earlier clear" ${i ? '' : 'disabled'}>${SB.glyph('left')}</button><span>Clear ${i + 1} of ${n}${best}</span><button data-act="scoreLogStep" data-step="1" aria-label="Later clear" ${i < n - 1 ? '' : 'disabled'}>${SB.glyph('right')}</button></div>` : '';
     let c = 0, m = 0;
     const rows = t.log.map((l) => {
       if (l.k === 'c') c += l.v; else if (l.k === 'm') m += l.v; else if (l.k === 'x') m *= l.v; else if (l.k === '=') m = l.v;
@@ -1596,7 +1611,7 @@
     const adj = (t.adj || []).map((a) => `<li class="sl-row adj"><span class="sl-src"><span>${esc(a.label)}</span></span><b class="sl-val">${esc(a.v)}</b><span class="sl-run"></span></li>`).join('')
       + (t.locked ? '<li class="sl-row adj"><span class="sl-src"><span>No score until the Rival tops out</span></span><b class="sl-val">0</b><span class="sl-run"></span></li>' : '');
     const name = `${esc(t.name)}${t.lines > 1 && !['double', 'triple', 'tetris'].includes(t.type) ? ' (' + t.lines + ' lines)' : ''}`;
-    UI.openModal(`<h1>${i === n - 1 ? 'Last score' : 'Earlier score'}</h1>${nav}
+    UI.openModal(`<h1>${L ? 'Last Stack' : i === n - 1 ? 'Last score' : 'Earlier score'}</h1>${where}${nav}
       <div class="sl-head"><b class="sl-name">${name}</b>${t.b2b ? '<span class="b2b">B2B</span>' : ''}${t.combo > 0 ? `<span class="combo">Combo ${t.combo}</span>` : ''}<b class="sl-score">+${fmt(t.score)}</b></div>
       <ol class="sl-steps">${rows}</ol>
       <div class="sl-sum"><span class="c">${SB.uiIco('mass')}${fmt(t.chips)}</span><i>×</i><span class="m">${SB.uiIco('charge')}${SB.fmtX(t.mult)}</span><i>=</i><b>${fmt(raw)}</b></div>
@@ -1639,6 +1654,12 @@
     const stack = UI.stack;
     SB.meta.data.bestScore = Math.max(SB.meta.data.bestScore || 0, res.score);
     const out = Run.completeStack(run, stack, res);
+    // the Stack's clears stay viewable from the Workshop (Last Stack), and are saved with the run
+    const hist = UI.scoreHistGame === g ? UI.scoreHist : [];
+    run.lastScores = {
+      name: stack.boss ? SB.BOSSES[stack.boss].name : stack.name, ante: stack.ante, score: res.score,
+      clears: hist.map((t) => ({ name: t.name, type: t.type, lines: t.lines, b2b: t.b2b, combo: t.combo, score: t.score, raw: t.raw, chips: t.chips, mult: t.mult, log: t.log, adj: t.adj, locked: t.locked })),
+    };
     SB.Ach.bump('stacks');
     if (!g.hardDrops) SB.Ach.bump('softStacks');
     if (stack.boss) SB.Ach.bump('wardens');
@@ -1674,26 +1695,47 @@
 
   // ---------- bag modal ----------
   // after The Egg hatches: pick a piece to turn to Yolk (every material, no downsides). It waits until you choose.
-  UI.eggChoice = function () {
+  UI.eggChoice = function (sel) {
     const run = UI.run;
     if (!run || !run.flags.eggChoice || UI.modal || UI.screen !== 'shop') return;
     UI.openBag({
-      type: 'choose', noCancel: true, title: 'The Egg hatched: choose a piece',
-      hint: `${esc(SB.MATERIALS.yolk.desc)}. It replaces the piece's current material.`,
-      label: (p) => (p.mat === 'yolk' ? 'Yolk' : 'Choose'),
-      onPick: (p) => {
+      type: 'choose', noCancel: true, title: 'The Egg hatched: choose a piece', sel,
+      hint: `${esc(SB.MATERIALS.yolk.desc)}.`,
+      label: (p) => matLabel(p, 'yolk'), note: (p) => matLabel(p, 'yolk'), act: () => 'Make it Yolk',
+      onPick: (p) => pickMat(p, 'yolk', () => {
         p.mat = 'yolk';
         run.flags.eggChoice = false;
         SB.audio.play('levelup');
         UI.toast(`${esc(SB.SHAPES[p.shape].name)} is now Yolk`);
         SB.saveRun(run);
         UI.closeModal();
-      },
+      }, (uid) => UI.eggChoice(uid)),
     });
+  };
+  // how a Material would land on a piece: added, replacing the one it has, or already there
+  const matLabel = (p, m) => (p.mat === m ? `<span class="ml same">Already ${SB.MATERIALS[m].name}</span>` : p.mat ? `<span class="ml rep">Replaces ${SB.MATERIALS[p.mat].name}</span>` : `<span class="ml add">Adds ${SB.MATERIALS[m].name}</span>`);
+  // a Material picked for a piece: straight on if the piece has none, after a check if it would replace one
+  const pickMat = (p, m, apply, reopen) => {
+    if (p.mat === m) return deny(`Already ${SB.MATERIALS[m].name}`);
+    if (!p.mat) return apply();
+    if (UI.modal) { UI.modal.onClose = null; UI.closeModal(); }
+    UI.confirmMat(p, m, apply, () => reopen(p.uid));
+  };
+  UI.confirmMat = function (p, m, onYes, onBack) {
+    const old = p.mat;
+    UI.repAsk = { onYes };
+    UI.openModal(`<h1>Replace ${SB.MATERIALS[old].name} with ${SB.MATERIALS[m].name}?</h1>
+      <div class="rep-pair">${miniCv(p, 96, 72, 18)}${SB.glyph('next')}${miniCv(Object.assign({}, p, { mat: m }), 96, 72, 18)}</div>
+      <div class="rep-lines">
+        <div class="rep-out"><div>${kindTag('mat')} ${matName(old)} <span class="rep-tag">goes</span></div><div class="dim small">${esc(SB.MATERIALS[old].desc)}</div></div>
+        <div class="rep-in"><div>${kindTag('mat')} ${matName(m)} <span class="rep-tag">takes its place</span></div><div class="dim small">${esc(SB.MATERIALS[m].desc)}</div></div>
+      </div>
+      <div class="menu-row"><button data-act="closeModal">Back</button><button class="primary" data-act="repYes">Replace</button></div>`, 'confirm-modal rep-modal', onBack);
   };
   UI.openBag = function (mode) {
     UI.bagMode = mode || { type: 'view' };
-    UI.bagSel = null;
+    UI.bagSel = (mode && mode.sel) || null;
+    UI.bagShown = null;
     UI.openModal('<div id="bagWrap"></div>', 'bag-modal', () => { if (UI.screen !== 'play') UI.refresh(); });
     UI.bagMode = mode || { type: 'view' };
     UI.renderBag();
@@ -1708,38 +1750,54 @@
     const hint = mode.type === 'choose' ? mode.hint || '' : '';
     const ghostMode = mode.type === 'place' || mode.type === 'patch' || mode.type === 'move';
     if (UI.lastPointer && UI.lastPointer !== 'mouse') UI.bagHover = null;
+    const choose = mode.type === 'choose';
     const list = run.pieces.slice().sort((a, b) => (rates.get(b) || 0) - (rates.get(a) || 0)).map((p) => {
       const r = rates.get(p) || 0;
       return `<div class="bag-item ${UI.bagSel === p.uid ? 'sel' : ''} ${p.banned ? 'banned' : ''}" data-act="bagSelect" data-uid="${p.uid}" ${UI.tip(tipPiece(p, r))}>
-        ${miniCv(p, 44, 34, 9)}<div class="bi-name">${esc(SB.SHAPES[p.shape].name)} ${UI.lvBadge(p)}</div>
-        <div class="bi-rate">${p.banned ? '0%' : (r * 100).toFixed(1) + '%'}</div>
-        ${mode.type === 'choose' && mode.label ? `<div class="bi-extra">${mode.label(p)}</div>` : ''}
+        ${miniCv(p, 44, 34, 9)}<div class="bi-text"><div class="bi-name">${esc(SB.SHAPES[p.shape].name)} ${UI.lvBadge(p)}</div>
+        <div class="bi-sub"><span class="bi-rate">${p.banned ? '0%' : (r * 100).toFixed(1) + '%'}</span>${choose && mode.label ? `<span class="bi-extra">${mode.label(p)}</span>` : ''}</div></div>
       </div>`;
     }).join('');
-    let detail = '';
+    // the picked piece's details. On a phone they sit in the column beside the list, and with nothing
+    // picked that column shows the Bag's numbers instead
+    let detail;
     const sel = run.pieces.find((p) => p.uid === UI.bagSel);
     if (sel) {
-      const fee = Run.removalFee(run, sel);
-      const lockRemove = run.pieces.length <= 6;
-      detail = `<div class="bag-detail">${tipPiece(sel, rates.get(sel))}
-        <div class="bd-btns">
+      let btns;
+      if (choose) {
+        btns = `${mode.note ? `<div class="bd-note">${mode.note(sel)}</div>` : ''}<div class="bd-btns"><button class="primary" data-act="bagChoose" data-uid="${sel.uid}">${mode.act ? mode.act(sel) : 'Choose'}</button></div>`;
+      } else {
+        const fee = Run.removalFee(run, sel);
+        const lockRemove = run.pieces.length <= 6;
+        btns = `<div class="bd-btns">
           <button data-act="bagMove" data-uid="${sel.uid}">Move</button>
           <button class="danger" data-act="bagRemove" data-uid="${sel.uid}" ${lockRemove || run.money < fee ? 'disabled' : ''}>Remove ($${fee})</button>
         </div>
-        ${lockRemove ? '<div class="dim small">Keep at least 6 pieces.</div>' : ''}
-      </div>`;
+        ${lockRemove ? '<div class="dim small">Keep at least 6 pieces.</div>' : ''}`;
+      }
+      const fresh = UI.bagShown !== sel.uid;
+      detail = `<div class="bag-detail ${fresh ? 'pop' : ''}"><div class="bd-art">${miniCv(sel, 96, 72, 18)}</div><div class="bd-info">${tipPiece(sel, rates.get(sel))}</div>${btns}</div>`;
+    } else {
+      detail = `<div class="bag-detail empty"><div class="bd-stats"><div><b>${Run.bagCellsUsed(run)}</b><span>cells used</span></div><div><b>${Run.bagFree(run)}</b><span>free</span></div><div><b>${run.pieces.length}</b><span>pieces</span></div><div><b>${Run.playableCount(run)}</b><span>playable</span></div></div></div>`;
     }
+    UI.bagShown = sel ? sel.uid : null;
     let pending = '';
     if (mode.type === 'place') pending = `<div class="pending">${miniCv(mode.piece, 80, 60, 16)}<div>${tipPiece(Object.assign({ level: 1 }, mode.piece))}</div></div>`;
     wrap.innerHTML = `<h1>${titles[mode.type]}</h1>
       <div class="bag-body">
         <div class="bag-left"><canvas id="bagcv"></canvas>${hint ? `<div class="hint">${hint}</div>` : ''}
-          <div class="dim small">Bag: ${Run.bagCellsUsed(run)} cells used, ${Run.bagFree(run)} free · ${run.pieces.length} pieces (${Run.playableCount(run)} playable)</div></div>
+          <div class="dim small bag-sum">Bag: ${Run.bagCellsUsed(run)} cells used, ${Run.bagFree(run)} free · ${run.pieces.length} pieces (${Run.playableCount(run)} playable)</div></div>
         <div class="bag-right">${pending}<div class="bag-list">${list}</div>${detail}</div>
       </div>
       <div class="menu-row">${ghostMode ? `<button data-act="bagRotate">${SB.glyph('rotate')} Rotate</button>` : ''}${mode.type === 'view' ? '<button class="primary" data-act="closeModal">Done</button>' : mode.noCancel ? '' : `<button data-act="bagCancel">${mode.cancelLabel || 'Cancel'}</button>`}</div>`;
     UI.drawMinis(wrap);
+    // on a phone the details column can sit below the fold: bring a newly picked piece's details into view
+    const det = wrap.querySelector('.bag-detail.pop');
+    if (det && UI.touch && det.scrollIntoView) det.scrollIntoView({ block: 'nearest' });
     const cv = $('#bagcv');
+    // and when Move (or placing) starts, bring the Bag itself back into view
+    if (ghostMode && UI.touch && UI.bagModeShown !== mode && cv.scrollIntoView) cv.scrollIntoView({ block: 'nearest' });
+    UI.bagModeShown = mode;
     UI.bagCs = 42;
     UI.bagRot = UI.bagRot || 0;
     const draw = () => {
@@ -2139,12 +2197,20 @@
       if (UI.modal) { UI.modal.onClose = null; UI.closeModal(); }
       else if (g.status === 'playing') g.status = 'paused';
       else return;
+      UI.scoreLogLast = false;
       UI.scoreLogAt = (UI.scoreHistGame === g && UI.scoreHist.length) ? UI.scoreHist.length - 1 : 0;
       UI.openScoreLog();
       UI.modal.onClose = () => { if (UI.game && UI.game.status === 'paused') { UI.game.status = 'playing'; UI.countdown = 0.6; } };
     },
+    // the Workshop's Last Stack button: the finished Stack's clears, opening on its last one
+    lastStack: () => {
+      if (UI.screen !== 'shop' || UI.modal) return;
+      UI.scoreLogLast = true;
+      UI.scoreLogAt = Math.max(0, scoreLogHist().length - 1);
+      UI.openScoreLog();
+    },
     scoreLogStep: (d) => {
-      const n = UI.scoreHistGame === UI.game ? UI.scoreHist.length : 0;
+      const n = scoreLogHist().length;
       UI.scoreLogAt = SB.clamp((UI.scoreLogAt || 0) + (+d.step), 0, Math.max(0, n - 1));
       const close = UI.modal && UI.modal.onClose;
       UI.openScoreLog();
@@ -2292,6 +2358,7 @@
         type: 'choose', title: 'Forge: +1 level to a piece',
         get hint() { return `This one costs $${Run.forgePrice(run)}, and each forge doubles the price until you leave. Levels are kept for the run. Bonuses at Lv5, Lv10 and Lv15.`; },
         label: (p) => (maxed(p) ? 'MAX' : '$' + Run.forgePrice(run)),
+        act: (p) => (maxed(p) ? 'Max level' : `Forge $${Run.forgePrice(run)}`),
         onPick: (p) => {
           if (maxed(p)) return deny(`Already Level ${SB.MAX_LEVEL}`);
           const price = Run.forgePrice(run);
@@ -2310,11 +2377,26 @@
       const m = UI.bagMode;
       const p = UI.run.pieces.find((q) => q.uid === +d.uid);
       if (!p) return;
-      if (m && m.type === 'choose') { m.onPick(p); return; }
+      // with a mouse, a click picks it (hovering already shows what it is); a finger first opens its details,
+      // and the button there does it
+      if (m && m.type === 'choose') { if (UI.touch) { UI.bagSel = p.uid; UI.renderBag(); return; } m.onPick(p); return; }
       // picking another piece from the list while moving one cancels the move
       if (m && m.type === 'move') { UI.bagMode = m.prev || { type: 'view' }; UI.bagSel = p.uid; UI.renderBag(); return; }
       UI.bagSel = UI.bagSel === p.uid ? null : p.uid;
       UI.renderBag();
+    },
+    repYes: () => {
+      const a = UI.repAsk;
+      UI.repAsk = null;
+      if (UI.modal) { UI.modal.onClose = null; UI.closeModal(); }
+      if (!a) return;
+      a.onYes();
+      if (!UI.modal && UI.screen !== 'play') UI.refresh();
+    },
+    bagChoose: (d) => {
+      const m = UI.bagMode;
+      const p = UI.run.pieces.find((q) => q.uid === +d.uid);
+      if (m && m.type === 'choose' && p) m.onPick(p);
     },
     bagRemove: (d) => {
       const run = UI.run;
@@ -2371,7 +2453,25 @@
     };
     if (inf.live) return deny(UI.touch ? 'Live Glyphs are used during a Stack: tap them at the top of the screen' : 'Live Glyphs are used during a Stack with keys 1-4');
     if (inf.target === 'piece') {
-      UI.openBag({ type: 'choose', title: `${inf.icon} ${inf.name}: choose a piece`, hint: esc(inf.desc), onPick: (p) => { const msg = Run.useConsumable(run, i, { uid: p.uid }); if (msg && msg.error) return deny(msg.error); UI.modal.onClose = null; UI.closeModal(); finish(msg); } });
+      const g = c.kind === 'glyph' ? SB.GLYPHS[c.id] : {};
+      const use = (p) => { const msg = Run.useConsumable(run, i, { uid: p.uid }); if (msg && msg.error) return deny(msg.error); if (UI.modal) { UI.modal.onClose = null; UI.closeModal(); } finish(msg); };
+      const open = (sel) => UI.openBag({
+        type: 'choose', title: `${inf.icon} ${inf.name}: choose a piece`, hint: esc(inf.desc), sel,
+        label: g.mat ? (p) => matLabel(p, g.mat) : null, note: g.mat ? (p) => matLabel(p, g.mat) : null,
+        act: (p) => (g.mat ? `Make it ${SB.MATERIALS[g.mat].name}` : c.id === 'ban' ? (p.banned ? 'Unban' : 'Ban') : esc(inf.name)),
+        onPick: (p) => (g.mat ? pickMat(p, g.mat, () => use(p), open) : use(p)),
+      });
+      open();
+      return;
+    }
+    // Transmute: every piece's Material is replaced, so say which ones have one first
+    const lose = consMat(c) === 'all' ? run.pieces.filter((p) => p.mat) : [];
+    if (lose.length) {
+      UI.repAsk = { onYes: () => finish(Run.useConsumable(run, i)) };
+      UI.openModal(`<h1>Replace every Material?</h1>
+        <div class="rep-sub">${esc(inf.desc)}. ${lose.length === 1 ? 'This piece loses its Material' : `These ${lose.length} pieces lose their Materials`}:</div>
+        <div class="rep-list">${lose.map((p) => `<div class="rep-piece">${miniCv(p, 64, 48, 12)}<div><b>${esc(SB.SHAPES[p.shape].name)}</b> ${matName(p.mat)}</div></div>`).join('')}</div>
+        <div class="menu-row"><button data-act="closeModal">Back</button><button class="primary" data-act="repYes">${esc(inf.name)}</button></div>`, 'confirm-modal rep-modal');
       return;
     }
     if (inf.target === 'cell') {

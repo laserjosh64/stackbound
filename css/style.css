@@ -2155,3 +2155,90 @@ button .ug { margin: 0 .12em; }
 .tod-v { display: inline-block; padding: 0 5px; border-radius: 4px; font-variant-numeric: tabular-nums; }
 .tod-v.m { color: #d29bff; background: rgba(210, 155, 255, .12); }
 .tod-v.x { color: #fff; background: var(--charge); }
+
+/* pass 34: kind tags (Material, Special, Behaviour), the Bag's details column, the replace check, Last Stack */
+.mod-kind { display: inline-block; font-size: 9.5px; font-weight: 800; line-height: 1.55; letter-spacing: .08em; text-transform: uppercase; padding: 0 5px; border-radius: 4px; border: 1px solid; vertical-align: 1px; white-space: nowrap; }
+.mk-mat { background: #3a2e0c; border-color: #7a6320; color: #ffd86a; }
+.mk-special { background: #0d2c3a; border-color: #23667e; color: #86e6ff; }
+.mk-behavior { background: #2a1640; border-color: #5c3a86; color: #d9b0ff; }
+.pd-line + .pd-line { margin-top: 3px; }
+.tip-kind { margin-top: 5px; font-size: 12px; color: var(--dim); }
+.sc-desc .mod-kind { margin-right: 2px; }
+.ml { font-weight: 700; font-size: 12px; white-space: nowrap; }
+.ml.add { color: var(--good); }
+.ml.rep { color: #ff9a5c; }
+.ml.same { color: var(--dim); }
+.bi-text { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; }
+.bi-name { min-width: 0; }
+.bi-sub { display: flex; align-items: center; gap: 8px; }
+.bag-detail.empty, .bd-art { display: none; }
+.bag-detail.pop { animation: bd-pop .22s ease-out; }
+@keyframes bd-pop { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
+.bd-note { margin-top: 8px; }
+.bd-note .ml { font-size: 13px; white-space: normal; }
+.bd-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.bd-stats div { background: rgba(0, 0, 0, .25); border-radius: 8px; padding: 6px 4px; text-align: center; }
+.bd-stats b { display: block; font-size: 22px; line-height: 1.1; color: var(--text); }
+.bd-stats span { font-size: 11px; letter-spacing: .04em; color: var(--dim); }
+.rep-modal { width: min(460px, 94vw); }
+.rep-pair { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 6px 0 12px; }
+.rep-pair .ug { width: 22px; height: 22px; color: var(--dim); }
+.rep-lines { display: grid; gap: 8px; text-align: left; }
+.rep-out, .rep-in { background: rgba(0, 0, 0, .25); border-radius: 10px; padding: 8px 10px 8px 12px; border-left: 3px solid; }
+.rep-out { border-color: #ff7a5c; }
+.rep-in { border-color: var(--good); }
+.rep-out .dim, .rep-in .dim { margin-top: 3px; }
+.rep-tag { margin-left: 4px; font-size: 12px; font-weight: 700; color: var(--dim); }
+.rep-sub { color: var(--dim); margin: 4px 0 10px; }
+.rep-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 4px; }
+.rep-piece { display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, .25); border-radius: 10px; padding: 4px 10px 4px 4px; font-size: 14px; text-align: left; }
+.rep-piece .mini { margin: 0; }
+.rep-modal .menu-row { justify-content: center; }
+.sl-stack { text-align: center; color: var(--dim); font-size: 14px; margin: -4px 0 10px; }
+.sl-best { margin-left: 8px; padding: 0 6px; border-radius: 4px; font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; background: #3a2e0c; color: var(--gold); vertical-align: 1px; }
+
+/* phones (and short landscape screens): the piece list on the left, the picked piece's details on the right */
+@media (max-width: 600px), (max-height: 500px) {
+  .bag-right { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 8px; align-items: start; }
+  .bag-right > .pending { grid-column: 1 / -1; }
+  .bag-list { max-height: none; overflow: visible; gap: 4px; }
+  .bag-item { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: 6px; padding: 4px 6px; min-height: 48px; }
+  .bag-item .mini { width: 36px; height: auto; margin: 0; }
+  .bi-text { display: block; }
+  .bi-name { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bi-sub { justify-content: space-between; gap: 2px 6px; flex-wrap: wrap; }
+  .bi-rate { font-size: 12px; }
+  .bi-extra { min-width: 0; flex-basis: 100%; text-align: left; font-size: 11px; line-height: 1.2; }
+  .bi-extra .ml { font-size: 11px; }
+  .bag-detail, .bag-detail.empty { display: block; position: sticky; top: 0; font-size: 12.5px; line-height: 1.4; }
+  .bd-art { display: flex; justify-content: center; margin: 0 0 6px; }
+  .bd-art .mini { margin: 0; }
+  .bd-btns { flex-wrap: wrap; }
+  .bd-btns button { flex: 1 1 auto; padding: 8px 10px; }
+  .bag-sum { display: none; }
+}
+@media (max-width: 600px) {
+  #bagcv { max-width: min(420px, 100%, 46vh); }
+}
+/* short landscape phones: the Bag beside the two columns, everything within the screen's height */
+@media (max-height: 500px) and (min-width: 601px) {
+  .bag-modal { min-width: 0; width: calc(100vw - 16px); max-height: calc(100% - 12px); padding: 10px 14px; }
+  .bag-modal h1 { font-size: 20px; margin: 0 0 6px; }
+  .bag-body { gap: 12px; }
+  #bagcv { width: calc(100vh - 120px); height: calc(100vh - 120px); }
+  .bag-right { flex: 1; width: auto; min-width: 0; }
+  #bagWrap > .menu-row:last-child { position: sticky; bottom: -10px; z-index: 3; margin: 8px -14px -10px; padding: 8px 14px; background: linear-gradient(to bottom, rgba(16, 15, 40, 0), rgba(16, 15, 40, .97) 35%); }
+}
+@media (max-width: 600px) {
+  /* the Workshop's four HUD buttons get their own full-width row under the money */
+  .hud-left.n4 .money { grid-row: auto; }
+  .hud-left.n4 .hud-btns { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 8px; }
+  .hud-left.n4 .hud-btns button { padding: 6px 2px; display: flex; align-items: center; justify-content: center; gap: 4px; min-width: 0; overflow: hidden; }
+}
+/* Last Stack: in the side rail on wide screens, in the HUD's button row when the HUD stacks */
+@media (min-width: 1101px) { .hud-btns [data-act="lastStack"] { display: none; } }
+@media (max-width: 1100px) { .rail-last { display: none; } }
+@media (max-width: 600px), (max-height: 500px) {
+  .bag-detail { scroll-margin: 8px 0 76px; }
+  .bd-art .mini { width: 72px; height: auto; }
+}
