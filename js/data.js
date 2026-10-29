@@ -5,13 +5,13 @@
   // cells: [x,y] inside a box (y down). Four-block pieces use their usual spawn states.
   const S = (name, group, rarity, price, color, box, cells) => ({ name, group, rarity, price, color, box, cells });
   SB.SHAPES = {
-    I: S('I', 'Standard', 'Starter', 3, '#ff6f91', 4, [[0, 1], [1, 1], [2, 1], [3, 1]]),
-    O: S('O', 'Standard', 'Starter', 3, '#36cfc0', 2, [[0, 0], [1, 0], [0, 1], [1, 1]]),
-    T: S('T', 'Standard', 'Starter', 3, '#ffb340', 3, [[1, 0], [0, 1], [1, 1], [2, 1]]),
-    S: S('S', 'Standard', 'Starter', 3, '#a77bff', 3, [[1, 0], [2, 0], [0, 1], [1, 1]]),
-    Z: S('Z', 'Standard', 'Starter', 3, '#a3e05a', 3, [[0, 0], [1, 0], [1, 1], [2, 1]]),
-    L: S('L', 'Standard', 'Starter', 3, '#5ba8ff', 3, [[2, 0], [0, 1], [1, 1], [2, 1]]),
-    J: S('J', 'Standard', 'Starter', 3, '#efe6cf', 3, [[0, 0], [0, 1], [1, 1], [2, 1]]),
+    I: S('I', 'Standard', 'Starter', 3, '#e06c75', 4, [[0, 1], [1, 1], [2, 1], [3, 1]]),
+    O: S('O', 'Standard', 'Starter', 3, '#56b6c2', 2, [[0, 0], [1, 0], [0, 1], [1, 1]]),
+    T: S('T', 'Standard', 'Starter', 3, '#e5c07b', 3, [[1, 0], [0, 1], [1, 1], [2, 1]]),
+    S: S('S', 'Standard', 'Starter', 3, '#c678dd', 3, [[1, 0], [2, 0], [0, 1], [1, 1]]),
+    Z: S('Z', 'Standard', 'Starter', 3, '#98c379', 3, [[0, 0], [1, 0], [1, 1], [2, 1]]),
+    L: S('L', 'Standard', 'Starter', 3, '#61afef', 3, [[2, 0], [0, 1], [1, 1], [2, 1]]),
+    J: S('J', 'Standard', 'Starter', 3, '#d19a66', 3, [[0, 0], [0, 1], [1, 1], [2, 1]]),
     M1: S('Monomino', 'Small', 'Common', 2, '#ff7ad9', 1, [[0, 0]]),
     D2: S('Domino', 'Small', 'Common', 2, '#ff7ad9', 2, [[0, 0], [1, 0]]),
     I3: S('I-Tromino', 'Small', 'Common', 3, '#7af7ff', 3, [[0, 1], [1, 1], [2, 1]]),

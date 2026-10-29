@@ -74,7 +74,7 @@
   // Edge-aware skins (edgy) get the block's place in its piece, so their sprites are cached per edge and lead.
   const SKINS = {};
   Rn.SKINS = SKINS;
-  const curSkin = () => (SB.Cosmetic ? SB.Cosmetic.skin() : 'slab');
+  const curSkin = () => (SB.Cosmetic ? SB.Cosmetic.skin() : 'puffy');
   Rn.skinEdgy = (skin) => !!(SKINS[skin || curSkin()] && SKINS[skin || curSkin()].edgy);
   const seedOf = (str) => { let h = 7; for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0; return h % 997; };
 

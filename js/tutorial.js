@@ -9,7 +9,7 @@
   const K = (a) => SB.UI.kbd(a); // the player's own key for a game action (Settings > Keys)
 
   // ---------- practice board helpers ----------
-  const PALETTE = ['#ff6f91', '#36cfc0', '#ffb340', '#a77bff', '#a3e05a', '#5ba8ff', '#efe6cf'];
+  const PALETTE = ['#e06c75', '#56b6c2', '#e5c07b', '#c678dd', '#98c379', '#61afef', '#d19a66'];
   let pidSeq = 50000;
   const filler = (x, r) => ({ uid: -5, pid: pidSeq++, shape: 'T', color: PALETTE[(x * 3 + r) % PALETTE.length], t: 0 });
   // fill rows counted from the floor (0 = bottom row), leaving the listed columns open

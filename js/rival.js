@@ -3,7 +3,7 @@
 // garbage, lines it clears send garbage to you, and you score nothing until it tops out. The clock keeps running.
 'use strict';
 (function (SB) {
-  const H = SB.BOARD_H, W = SB.BOARD_W, COLORS = ['#ff6f91', '#36cfc0', '#ffb340', '#a77bff', '#a3e05a', '#5ba8ff', '#efe6cf'];
+  const H = SB.BOARD_H, W = SB.BOARD_W, COLORS = ['#e06c75', '#56b6c2', '#e5c07b', '#c678dd', '#98c379', '#61afef', '#d19a66'];
   // garbage sent per clear, the usual table: singles send nothing, a Quad sends 4
   const ATTACK = [0, 0, 1, 2, 4, 5];
   const TWIST = [0, 2, 4, 6, 8];

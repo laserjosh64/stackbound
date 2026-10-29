@@ -185,8 +185,8 @@ PRIZE COUNTER (pass 16, outside runs)
   as it won at least one Stack (so quitting a run straight away pays nothing). In Endless, every 30
   Stacks cleared pays another Ticket on the spot. The title screen's Prize Counter spends them.
   Everything there is looks only and changes nothing about scoring:
-  - Piece skins (pass 17 themes, each piece drawn as one object): Slab (free, the house look),
-    Gloss (free), Pixel 1,
+  - Piece skins (pass 17 themes, each piece drawn as one object): Puffy (free, the house look),
+    Slab (free), Gloss (free), Keycap 2, Enamel 2, Pixel 1,
     Toy Brick 2, Neon Sign 2, Bakery 2, Skyline 3, Steampunk 3, Castle 3. Material blocks (Gold,
     Glass, Steel and the rest) keep their own look so they still read at a glance.
   - Clear effects: Classic (free), Shatter 1, Confetti 1, Lightning 2, Fireworks 3, Dissolve 2.
@@ -201,12 +201,13 @@ NEW IN PASS 35 (own identity for the App Store)
   - New names: the four-line clear is a Quad, a T-piece spin clear is a Twist, and a Quad or Twist
     right after another is a Repeat. Curios, achievements, stats and sounds use the new names
     (Tetromancer is now Fourcaster, Tetris Tax is Quad Tax, Back to Back is Double Feature).
-  - The seven starting pieces have new colours: I rose, O teal, T amber, S violet, Z lime, L sky
-    blue, J bone.
+  - The seven starting pieces have new colours (the Dusk set): I rose, O teal, T sand, S orchid,
+    Z sage, L sky blue, J copper.
   - The board starts 11 wide and 22 tall (same shape on screen). Wide, Narrow, Tall and the Giant
     follow it: 13 wide, 9 wide, 26 tall and 13 wide.
-  - Slab is the new house look for pieces: matte, one ink outline round each piece. The old glossy
-    blocks are still in the Prize Counter as Gloss.
+  - Puffy is the new house look for pieces: each piece is one soft, rounded shape. Slab (matte
+    with an ink outline), Keycap and Enamel are new skins, and the old glossy blocks are still
+    in the Prize Counter as Gloss.
   - The landing guide is a dotted chalk outline with a faint wash instead of a see-through copy.
   - The dating game's style is now the Sweetheart style, and the finale is a thank-you from Elle.
   - Saves carry over: old stats, curios, achievements and settings are renamed on load.

@@ -199,7 +199,7 @@ window.SB = window.SB || {};
         case 'move': this.hiss(0.025, 0.05, 0, 2400, 1800, 1.5); this.ping(this.vary(330), 0.03, 0.012); break;
         case 'rotate': this.hiss(0.05, 0.05, 0, 1800, 3200, 1.4); this.ping(this.vary(660), 0.05, 0.02, 0, [[2, 0.3]]); break;
         case 'hold': this.hiss(0.12, 0.06, 0, 900, 2600, 1.2); this.ping(520, 0.12, 0.03); this.ping(780, 0.1, 0.025, 0.05); break;
-        case 'lock': { const o = arg || {}; this.skinLand(SB.Cosmetic ? SB.Cosmetic.skin() : 'slab', o.hard ? 0.55 : 1); if (o.mat) this.matLand(o.mat); break; }
+        case 'lock': { const o = arg || {}; this.skinLand(SB.Cosmetic ? SB.Cosmetic.skin() : 'puffy', o.hard ? 0.55 : 1); if (o.mat) this.matLand(o.mat); break; }
         case 'harddrop': { const p = arg || 0.5; this.noise(0.09 + p * 0.06, 0.07 + p * 0.05); this.tone(150, 0.2, 'sine', 0.13, 38); this.tone(70, 0.16, 'square', 0.02 + p * 0.03, 34); break; }
         case 'softtick': this.tone(1100 + Math.min(12, arg || 0) * 45, 0.016, 'triangle', 0.01); break;
         case 'softland': this.tone(260, 0.07, 'triangle', 0.035, 190); break;
