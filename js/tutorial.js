@@ -9,7 +9,7 @@
   const K = (a) => SB.UI.kbd(a); // the player's own key for a game action (Settings > Keys)
 
   // ---------- practice board helpers ----------
-  const PALETTE = ['#4f7bff', '#ff9a3b', '#b25cff', '#4dff7c', '#ff4d6a', '#ffd83b', '#35e6ff'];
+  const PALETTE = ['#ff6f91', '#36cfc0', '#ffb340', '#a77bff', '#a3e05a', '#5ba8ff', '#efe6cf'];
   let pidSeq = 50000;
   const filler = (x, r) => ({ uid: -5, pid: pidSeq++, shape: 'T', color: PALETTE[(x * 3 + r) % PALETTE.length], t: 0 });
   // fill rows counted from the floor (0 = bottom row), leaving the listed columns open
@@ -52,10 +52,10 @@
     id: 'lines', ico: 'lines', title: 'Clearing lines', kind: 'play', tally: true,
     lead: 'Fill a row from wall to wall and it clears. Clear several at once for a much bigger score.',
     seq: ['I', 'T', 'L', 'O', 'J', 'I', 'S', 'Z', 'I'],
-    setup: (g) => fillRows(g, [0, 1, 2, 3], [9]),
+    setup: (g) => fillRows(g, [0, 1, 2, 3], [g.W - 1]),
     steps: [
       { text: 'Clear a line', done: (t) => t.lines > 0 },
-      { text: `Stand the I piece up (${K('cw')}) and drop it in the gap on the right to clear four lines at once: a <b>Tetris</b>`, touch: 'Stand the I piece up (tap the right side) and drop it in the gap on the right to clear four lines at once: a <b>Tetris</b>', done: (t) => t.tetris > 0 },
+      { text: `Stand the I piece up (${K('cw')}) and drop it in the gap on the right to clear four lines at once: a <b>Quad</b>`, touch: 'Stand the I piece up (tap the right side) and drop it in the gap on the right to clear four lines at once: a <b>Quad</b>', done: (t) => t.quad > 0 },
     ],
     hint: `Messed it up? Press ${kbd('R')} or Reset to rebuild the board.`,
     touchHint: 'Messed it up? Tap Reset to rebuild the board.',
@@ -77,8 +77,8 @@
       const rows = SB.CLEAR_ORDER.map((k) => { const c = SB.CLEARS[k]; return `<tr><td>${SB.PATTERNS[c.pattern] ? SB.PATTERNS[c.pattern].icon : ''} ${c.name}</td><td class="chips">${c.chips}</td><td class="mult">${c.mult}</td><td>${c.chips * c.mult}</td></tr>`; }).join('');
       return `<div class="tut-grid2">
         <div>
-          <div class="tut-tally-demo"><div class="chips-box"><i>${ico('mass')} MASS</i><b>140</b></div><span class="x">×</span><div class="mult-box"><i>${ico('charge')} CHARGE</i><b>5</b></div><span class="x">=</span><div class="tut-eq">700</div></div>
-          <p>A Tetris starts at <b class="chips">100 Mass</b> and <b class="mult">5 Charge</b>. Every block in the cleared lines adds <b class="chips">+1 Mass</b>, so four full rows of 10 add 40 more.</p>
+          <div class="tut-tally-demo"><div class="chips-box"><i>${ico('mass')} MASS</i><b>144</b></div><span class="x">×</span><div class="mult-box"><i>${ico('charge')} CHARGE</i><b>5</b></div><span class="x">=</span><div class="tut-eq">720</div></div>
+          <p>A Quad starts at <b class="chips">100 Mass</b> and <b class="mult">5 Charge</b>. Every block in the cleared lines adds <b class="chips">+1 Mass</b>, so four full rows of 11 add 44 more.</p>
           <p><b>+</b> effects add to a number. <b>x</b> effects multiply it. Curios fire left to right, so a curio that multiplies Charge hits hardest when it sits at the end of the row.</p>
           <p>Board cells, materials, piece levels and curios all pile onto the same two numbers, in a set order. The last lesson, Scoring order, walks through it.</p>
         </div>
@@ -151,7 +151,7 @@
           <p>Stacks I and II roll a <b>modifier</b> that changes the rules a little and the pay a little. With the Scout's Report Schematic you can restock a modifier for $2. You can also <b>skip</b> the Stack to take its Token instead of its reward.</p>
           <p><b>Hazard</b> is the difficulty you pick before a run. Win a Hazard with a Builder to unlock the next one.</p>
         </div>
-        <div><h3 class="tut-h3">Wardens break a rule of Tetris</h3><div class="tut-bosses">${bosses}</div><p class="dim small">There are ${Object.keys(SB.BOSSES).length} Wardens. You can see which one is coming on the Floor map.</p></div>
+        <div><h3 class="tut-h3">Wardens break a rule of the game</h3><div class="tut-bosses">${bosses}</div><p class="dim small">There are ${Object.keys(SB.BOSSES).length} Wardens. You can see which one is coming on the Floor map.</p></div>
       </div>`;
     },
   });
@@ -161,7 +161,7 @@
     body: () => {
       const card = (icon, cls, name, text) => `<div class="tut-card ${cls}"><div class="tut-medal">${icon}</div><b>${name}</b><div class="dim small">${text}</div></div>`;
       return `<div class="tut-cards">
-        ${card(SB.RELICS.tetromancer.art, 'r-Rare', 'Curios', 'Up to 5. They fire left to right on every clear. Sell them for money.')}
+        ${card(SB.RELICS.fourcaster.art, 'r-Rare', 'Curios', 'Up to 5. They fire left to right on every clear. Sell them for money.')}
         ${card(SB.PATTERNS.pillar.icon, 'fam-Pattern', 'Patterns', 'Level up a clear type for more Mass and Charge.')}
         ${card(SB.GLYPHS.gild.icon, 'fam-Glyph', 'Glyphs', `Reshape pieces and the board. LIVE Glyphs fire mid-Stack ${UI.touch ? 'when you tap them' : `with ${kbd('1')}-${kbd('4')}`}.`)}
         ${card(SB.RIFTS.overload.icon, 'fam-Rift', 'Rifts', 'Big power with a price attached.')}
@@ -200,12 +200,12 @@
   });
   // the worked example on the Scoring order page; Swap flips the two curios
   const orderDemo = () => {
-    const t = SB.CLEARS.tetris, flip = !!UI.tutOrderFlip;
+    const t = SB.CLEARS.quad, flip = !!UI.tutOrderFlip;
     const cur = {
-      tetromancer: { n: 5, k: 'm', v: 4, label: SB.RELICS.tetromancer.name, icon: SB.RELICS.tetromancer.icon, cur: 1 },
+      fourcaster: { n: 5, k: 'm', v: 4, label: SB.RELICS.fourcaster.name, icon: SB.RELICS.fourcaster.icon, cur: 1 },
       still_water: { n: 5, k: 'x', v: 2, label: SB.RELICS.still_water.name, icon: SB.RELICS.still_water.icon, cur: 1 },
     };
-    const ids = flip ? ['tetromancer', 'still_water'] : ['still_water', 'tetromancer'];
+    const ids = flip ? ['fourcaster', 'still_water'] : ['still_water', 'fourcaster'];
     const steps = [
       { n: 1, k: 'c', v: t.chips, label: `${t.name} Lv.1` }, { n: 1, k: 'm', v: t.mult, label: `${t.name} Lv.1` },
       { n: 2, k: 'c', v: 40, label: 'Blocks (40)' },
@@ -231,7 +231,7 @@
         <ol class="tod-list">
           <li><b>The clear</b><span class="dim small">Its base Mass and Charge, from the table in Mass × Charge</span></li>
           <li><b>Blocks, then board cells</b><span class="dim small">+1 Mass per block. Cells like Echo go first, then Lens and Prism</span></li>
-          <li><b>Materials, then combos</b><span class="dim small">Glass, Steel and Clover pieces, then Combo and Back-to-back</span></li>
+          <li><b>Materials, then combos</b><span class="dim small">Glass, Steel and Clover pieces, then Combo and Repeat</span></li>
           <li><b>Piece levels</b><span class="dim small">The Lv5, Lv10 and Lv15 bonuses of the piece you placed</span></li>
           <li><b>Curios, left to right</b><span class="dim small">In the order they sit in your curio row</span></li>
           <li><b>Warden rules</b><span class="dim small">A few Wardens change the total last</span></li>
@@ -240,7 +240,7 @@
         <p>That is why a curio that adds Charge belongs to the left of one that multiplies it.</p>
       </div>
       <div>
-        <h3 class="tut-h3">A Tetris through an Echo cell with a Glass piece</h3>
+        <h3 class="tut-h3">A Quad through an Echo cell with a Glass piece</h3>
         <div id="tutOrder" class="tod">${orderDemo()}</div>
         <p class="dim small">During a Stack, ${UI.touch ? 'tap' : 'click'} the Mass × Charge box to see this list for your last clear.</p>
       </div></div>`,
@@ -293,7 +293,7 @@
   }
 
   // ---------- practice board ----------
-  function newTracker() { return { left: 0, right: 0, cw: 0, ccw: 0, hard: 0, soft: 0, slide: 0, hold: 0, locks: 0, locksAtHold: 0, lines: 0, tetris: 0, bomb: 0, drill: 0, vacuum: 0 }; }
+  function newTracker() { return { left: 0, right: 0, cw: 0, ccw: 0, hard: 0, soft: 0, slide: 0, hold: 0, locks: 0, locksAtHold: 0, lines: 0, quad: 0, bomb: 0, drill: 0, vacuum: 0 }; }
   function buildGame(l) {
     const T = UI.tut;
     if (!T.prevRng) T.prevRng = SB.rng;
@@ -317,7 +317,7 @@
       const rows = g.fullRows();
       const bomb = rows.some((r) => g.grid[r].some((b) => b && b.beh === 'bomb'));
       const k = o(p, ts, lc);
-      if (k > 0) { tk.lines += k; if (k >= 4) tk.tetris++; if (bomb) tk.bomb++; }
+      if (k > 0) { tk.lines += k; if (k >= 4) tk.quad++; if (bomb) tk.bomb++; }
       return k;
     });
     // topping out in practice just rebuilds the board

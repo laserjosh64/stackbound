@@ -36,7 +36,7 @@
   const INK = '#1a1030';
   // relic -> chip: a piece (its letter), a count of lines, an arrow, or a short number
   const CHIPS = {
-    single_minded: { lines: 1 }, double_trouble: { lines: 2 }, third_time: { lines: 3 }, tetromancer: { lines: 4 },
+    single_minded: { lines: 1 }, double_trouble: { lines: 2 }, third_time: { lines: 3 }, fourcaster: { lines: 4 },
     i_love_i: { pc: 'I' }, t_time: { pc: 'T' }, square_deal: { pc: 'O' }, snake_charmer: { pc: 'S' }, elbow_grease: { pc: 'L' },
     spinner: { pc: 'T' }, small_wonder: { pc: 'L3' }, big_game: { pc: 'P5' },
     left_hand: { arrow: 'l' }, right_hand: { arrow: 'r' }, low_rider: { arrow: 'd' }, high_wire: { arrow: 'u' },

@@ -282,25 +282,25 @@
       relics: [], consumables: [], pieces: [], uidCounter: 0,
       prevBest: { ante: SB.meta.data.bestAnte || 0, score: SB.meta.data.bestScore || 0 },
       bag: { active: [], bonus: {} },
-      board: { w: 10, h: 20, cells: {}, ash: {}, ember: {}, wells: [], overflow: false, shape: 'classic' },
-      levels: { single: 1, double: 1, triple: 1, tetris: 1, tspin: 1, allclear: 1, penta: 1, combo: 1 },
+      board: { w: SB.BOARD_W, h: SB.BOARD_H, cells: {}, ash: {}, ember: {}, wells: [], overflow: false, shape: 'classic' },
+      levels: { single: 1, double: 1, triple: 1, quad: 1, twist: 1, allclear: 1, penta: 1, combo: 1 },
       clearCounts: {}, blueprints: [], removals: 0, compost: 0, slotMod: 0, overload: 0,
-      flags: {}, stats: { lines: 0, tetrises: 0, pushes: 0, stacksWon: 0, bestStack: 0, totalScore: 0 },
+      flags: {}, stats: { lines: 0, quads: 0, pushes: 0, stacksWon: 0, bestStack: 0, totalScore: 0 },
       nextShop: {}, carry: 0, phase: 'map', shop: null, endless: false, history: [],
     };
-    let shapes = SB.TETROMINOES.slice();
+    let shapes = SB.CORE_SHAPES.slice();
     let level = 2, size = 6;
     let extras = {};
     switch (starter) {
       case 'miner': {
         run.money = 6;
-        for (let yb = 0; yb < 3; yb++) run.board.cells[SB.randInt(0, 9) + ',' + yb] = 'gold';
+        for (let yb = 0; yb < 3; yb++) run.board.cells[SB.randInt(0, run.board.w - 1) + ',' + yb] = 'gold';
         break;
       }
       case 'glassblower': level = 3; extras = { mat: 'glass' }; break;
-      case 'purist': shapes = ['I', 'I', 'O', 'O', 'T', 'T']; level = 3; run.levels.tetris = 3; break;
+      case 'purist': shapes = ['I', 'I', 'O', 'O', 'T', 'T']; level = 3; run.levels.quad = 3; break;
       case 'alchemist': break;
-      case 'giant': run.board.w = 12; shapes = ['I', 'O', 'T', 'L', 'J', 'P', 'T5', 'U', 'I5']; size = 7; break;
+      case 'giant': run.board.w = SB.BOARD_W + 2; shapes = ['I', 'O', 'T', 'L', 'J', 'P', 'T5', 'U', 'I5']; size = 7; break;
       case 'gambler': break;
     }
     const placements = Run.packStarting(run, shapes, size);
@@ -371,9 +371,9 @@
   };
   Run.setBoardShape = function (run, shape) {
     run.board.shape = shape;
-    const base = run.starter === 'giant' ? 12 : 10;
-    run.board.w = shape === 'wide' ? 12 : shape === 'narrow' ? 8 : base;
-    run.board.h = shape === 'tall' ? 24 : 20;
+    const base = run.starter === 'giant' ? SB.BOARD_W + 2 : SB.BOARD_W;
+    run.board.w = shape === 'wide' ? SB.BOARD_W + 2 : shape === 'narrow' ? SB.BOARD_W - 2 : base;
+    run.board.h = shape === 'tall' ? SB.BOARD_H + 4 : SB.BOARD_H;
     for (const k of Object.keys(run.board.cells)) { const x = +k.split(',')[0]; if (x >= run.board.w) delete run.board.cells[k]; }
     run.board.wells = run.board.wells.filter((x) => x < run.board.w);
   };
@@ -907,7 +907,7 @@
   Run.useRift = function (run, id) {
     switch (id) {
       case 'widen': {
-        if (run.board.w >= 14) return { error: 'The board is already as wide as it gets' };
+        if (run.board.w >= SB.BOARD_W + 4) return { error: 'The board is already as wide as it gets' };
         run.board.w++;
         let m = 'Board is now ' + run.board.w + ' wide';
         if (run.relics.length) { const v = SB.pick(run.relics); run.relics = run.relics.filter((r) => r !== v); m += `; lost ${SB.RELICS[v.id].name}`; }

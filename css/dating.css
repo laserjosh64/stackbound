@@ -1,4 +1,4 @@
-/* Falling for You (secret dating game, js/dating.js) and the Doki Doki style (js/doki.js).
+/* Falling for You (secret dating game, js/dating.js) and the Sweetheart style (js/sweet.js).
    Fonts: Fredoka (titles, names), Nunito (dialogue), Caveat (handwritten bits), all SIL OFL, files in css/fonts. */
 @font-face { font-family: 'Fredoka'; src: url('fonts/Fredoka.woff2') format('woff2'); font-weight: 300 700; font-display: swap; }
 @font-face { font-family: 'Nunito'; src: url('fonts/Nunito.woff2') format('woff2'); font-weight: 200 1000; font-display: swap; }
@@ -245,10 +245,10 @@ body.dating-open #tooltip { display: none !important; }
 }
 
 /* =====================================================================================
-   The Doki Doki style (html.doki, js/doki.js): pastel paper, pink trim, rounded letters,
+   The Sweetheart style (html.sweet, js/sweet.js): pastel paper, pink trim, rounded letters,
    heart bullets and a heart menu cursor. Everything here only applies while the style is on.
    ===================================================================================== */
-html.doki {
+html.sweet {
   --bg: #fff3f9; --panel: rgba(255, 255, 255, .94); --panel2: #ffeef7; --line: #ffc4df;
   --text: #5a2a4e; --dim: #a1789a; --accent: #ff5fa2; --pink: #ff5fa2; --gold: #d98a00;
   --chips: #2f8be0; --mult: #ef3f6a; --good: #23a85c;
@@ -264,105 +264,105 @@ html.doki {
   --plate-bg: none;
   color-scheme: light;
 }
-html.doki, html.doki body {
+html.sweet, html.sweet body {
   background-color: #fff3f9;
   background-image: radial-gradient(circle, rgba(255, 140, 192, .22) 2.2px, transparent 2.8px), repeating-linear-gradient(-45deg, rgba(255, 196, 223, .28) 0 22px, rgba(255, 255, 255, 0) 22px 44px);
   background-size: 28px 28px, auto; background-attachment: fixed;
 }
-html.doki #bg, html.doki #crt { display: none !important; }
-html.doki body { font-family: var(--f-body); font-weight: 600; }
-html.doki ::selection { background: #ffc4df; }
+html.sweet #bg, html.sweet #crt { display: none !important; }
+html.sweet body { font-family: var(--f-body); font-weight: 600; }
+html.sweet ::selection { background: #ffc4df; }
 
 /* plates */
-html.doki .panel, html.doki .modal, html.doki .hud, html.doki .pl-left, html.doki .pl-right, html.doki .pl-hold, html.doki .m-top, html.doki .stack-card, html.doki .prize-card, html.doki .shop-event, html.doki .help-grid > div {
+html.sweet .panel, html.sweet .modal, html.sweet .hud, html.sweet .pl-left, html.sweet .pl-right, html.sweet .pl-hold, html.sweet .m-top, html.sweet .stack-card, html.sweet .prize-card, html.sweet .shop-event, html.sweet .help-grid > div {
   border: 3px solid #ffb3d6; background: rgba(255, 252, 254, .96); box-shadow: 0 0 0 2px #fff, 0 5px 0 #f3a6c8, 0 12px 26px rgba(160, 40, 110, .16);
 }
-html.doki .modal { background-image: none; box-shadow: 0 0 0 3px #fff, 0 6px 0 #f3a6c8, 0 24px 60px rgba(120, 20, 90, .3); }
-html.doki .panel::after { background: var(--heart) left 4px top 4px / 10px 10px no-repeat, var(--heart) right 4px top 4px / 10px 10px no-repeat; -webkit-mask: none; opacity: .35; filter: none; background-color: transparent; }
-html.doki .panel::after { background-image: none; }
-html.doki #modal { background: rgba(255, 220, 238, .55); }
-html.doki .stack-card.is-boss { background: #fff0f3; border-color: #ff8fa8; }
-html.doki .stack-card.current { border-color: var(--kc, #ff5fa2); box-shadow: 0 0 0 2px #fff, 0 0 0 5px color-mix(in srgb, var(--kc, #ff5fa2) 35%, transparent), 0 5px 0 #f3a6c8; }
-html.doki .prize-card.on { border-color: var(--good); }
+html.sweet .modal { background-image: none; box-shadow: 0 0 0 3px #fff, 0 6px 0 #f3a6c8, 0 24px 60px rgba(120, 20, 90, .3); }
+html.sweet .panel::after { background: var(--heart) left 4px top 4px / 10px 10px no-repeat, var(--heart) right 4px top 4px / 10px 10px no-repeat; -webkit-mask: none; opacity: .35; filter: none; background-color: transparent; }
+html.sweet .panel::after { background-image: none; }
+html.sweet #modal { background: rgba(255, 220, 238, .55); }
+html.sweet .stack-card.is-boss { background: #fff0f3; border-color: #ff8fa8; }
+html.sweet .stack-card.current { border-color: var(--kc, #ff5fa2); box-shadow: 0 0 0 2px #fff, 0 0 0 5px color-mix(in srgb, var(--kc, #ff5fa2) 35%, transparent), 0 5px 0 #f3a6c8; }
+html.sweet .prize-card.on { border-color: var(--good); }
 
 /* headings */
-html.doki h2 { color: #d9488f; }
-html.doki h2::before { width: 12px; height: 12px; border: 0; box-shadow: none; background: #ff5fa2; -webkit-mask: var(--heart) no-repeat center / contain; mask: var(--heart) no-repeat center / contain; }
-html.doki .screen-title, html.doki .modal h1, html.doki .gameover h1 {
+html.sweet h2 { color: #d9488f; }
+html.sweet h2::before { width: 12px; height: 12px; border: 0; box-shadow: none; background: #ff5fa2; -webkit-mask: var(--heart) no-repeat center / contain; mask: var(--heart) no-repeat center / contain; }
+html.sweet .screen-title, html.sweet .modal h1, html.sweet .gameover h1 {
   color: #fff; font-family: var(--f-disp); text-shadow: none; -webkit-text-stroke: 8px #ff5fa2; paint-order: stroke fill; filter: drop-shadow(0 4px 0 rgba(192, 57, 127, .35)); letter-spacing: .02em;
 }
 
 /* buttons */
-html.doki button { border: 3px solid #ffb3d6; background: #fff; color: var(--text); box-shadow: 0 4px 0 #f3a6c8; font-family: var(--f-disp); font-weight: 600; }
-html.doki button:hover:not(:disabled) { background: #ffe8f3; border-color: #ff8cc0; }
-html.doki button:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 #f3a6c8; }
-html.doki button.big { box-shadow: 0 5px 0 #f3a6c8; }
-html.doki button.primary, html.doki button.gold-btn, html.doki button.big.primary, html.doki button.big.gold-btn {
+html.sweet button { border: 3px solid #ffb3d6; background: #fff; color: var(--text); box-shadow: 0 4px 0 #f3a6c8; font-family: var(--f-disp); font-weight: 600; }
+html.sweet button:hover:not(:disabled) { background: #ffe8f3; border-color: #ff8cc0; }
+html.sweet button:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 #f3a6c8; }
+html.sweet button.big { box-shadow: 0 5px 0 #f3a6c8; }
+html.sweet button.primary, html.sweet button.gold-btn, html.sweet button.big.primary, html.sweet button.big.gold-btn {
   background: linear-gradient(180deg, #ff8cc0, #ff5fa2); border-color: #fff; color: #fff; -webkit-text-stroke: 3px #c0397f; paint-order: stroke fill; box-shadow: 0 0 0 2px #ff9cc8, 0 5px 0 #d9488f; text-shadow: none;
 }
-html.doki button.primary:hover:not(:disabled), html.doki button.gold-btn:hover:not(:disabled) { background: linear-gradient(180deg, #ffa3cd, #ff70ae); border-color: #fff; }
-html.doki button.alt { background: linear-gradient(180deg, #c8b8ff, #a78bfa); border-color: #fff; color: #fff; -webkit-text-stroke: 3px #6d4ad0; paint-order: stroke fill; box-shadow: 0 0 0 2px #c8b8ff, 0 5px 0 #7c5ad8; text-shadow: none; }
-html.doki button.danger { background: #fff; color: #e0365f; border-color: #ffb0c0; }
-html.doki button.danger:hover:not(:disabled) { background: #fff0f3; }
-html.doki button.mitem.danger, html.doki button.mitem.danger:hover:not(:disabled) { background: none; border: none; box-shadow: none; }
-html.doki button:disabled { opacity: .5; box-shadow: 0 3px 0 #f3d0e2; }
-html.doki button:focus-visible, html.doki [data-act]:focus-visible { outline: 3px solid #ff5fa2; outline-offset: 3px; }
-html.doki .mlist button.mitem { background: none; border: 0; box-shadow: none; color: #8a3a76; }
-html.doki .mlist .mcursor { border: 3px solid #fff; border-radius: 999px; background: linear-gradient(180deg, #ff9cc8, #ff6fae); box-shadow: 0 0 0 2px #ffb3d6, 0 4px 0 #d9488f; }
-html.doki .mlist .mcursor::before, html.doki .mlist .mcursor::after { width: 18px; height: 18px; margin-top: -9px; background: var(--t-right) no-repeat center / contain; }
-html.doki .mlist .mcursor::after { transform: none; }
-html.doki .mlist button.mitem.on, html.doki .mlist button.mitem:focus-visible, html.doki .mlist button.mitem.sel { color: #fff; -webkit-text-stroke: 3px #c0397f; paint-order: stroke fill; outline: none; }
+html.sweet button.primary:hover:not(:disabled), html.sweet button.gold-btn:hover:not(:disabled) { background: linear-gradient(180deg, #ffa3cd, #ff70ae); border-color: #fff; }
+html.sweet button.alt { background: linear-gradient(180deg, #c8b8ff, #a78bfa); border-color: #fff; color: #fff; -webkit-text-stroke: 3px #6d4ad0; paint-order: stroke fill; box-shadow: 0 0 0 2px #c8b8ff, 0 5px 0 #7c5ad8; text-shadow: none; }
+html.sweet button.danger { background: #fff; color: #e0365f; border-color: #ffb0c0; }
+html.sweet button.danger:hover:not(:disabled) { background: #fff0f3; }
+html.sweet button.mitem.danger, html.sweet button.mitem.danger:hover:not(:disabled) { background: none; border: none; box-shadow: none; }
+html.sweet button:disabled { opacity: .5; box-shadow: 0 3px 0 #f3d0e2; }
+html.sweet button:focus-visible, html.sweet [data-act]:focus-visible { outline: 3px solid #ff5fa2; outline-offset: 3px; }
+html.sweet .mlist button.mitem { background: none; border: 0; box-shadow: none; color: #8a3a76; }
+html.sweet .mlist .mcursor { border: 3px solid #fff; border-radius: 999px; background: linear-gradient(180deg, #ff9cc8, #ff6fae); box-shadow: 0 0 0 2px #ffb3d6, 0 4px 0 #d9488f; }
+html.sweet .mlist .mcursor::before, html.sweet .mlist .mcursor::after { width: 18px; height: 18px; margin-top: -9px; background: var(--t-right) no-repeat center / contain; }
+html.sweet .mlist .mcursor::after { transform: none; }
+html.sweet .mlist button.mitem.on, html.sweet .mlist button.mitem:focus-visible, html.sweet .mlist button.mitem.sel { color: #fff; -webkit-text-stroke: 3px #c0397f; paint-order: stroke fill; outline: none; }
 
 /* cards */
-html.doki .shop-card, html.doki .pack-opt, html.doki .starter, html.doki .relic-slot, html.doki .cons-slot, html.doki .coll-item:not(.unknown) {
+html.sweet .shop-card, html.sweet .pack-opt, html.sweet .starter, html.sweet .relic-slot, html.sweet .cons-slot, html.sweet .coll-item:not(.unknown) {
   border: 3px solid color-mix(in srgb, var(--rc, #ffb3d6) 55%, #fff); background: linear-gradient(180deg, color-mix(in srgb, var(--rc, #ffb3d6) 14%, #fff), #fff 70%);
   box-shadow: 0 0 0 2px #fff, 0 5px 0 color-mix(in srgb, var(--rc, #f3a6c8) 45%, #f3c0da);
 }
-html.doki .shop-card:hover:not(.sold), html.doki .pack-opt:hover, html.doki .starter:not(.locked):hover { box-shadow: 0 0 0 2px #fff, 0 0 0 5px color-mix(in srgb, var(--rc, #ff5fa2) 30%, transparent), 0 8px 0 color-mix(in srgb, var(--rc, #f3a6c8) 45%, #f3c0da) !important; }
-html.doki .starter { --rc: #ff8cc0; }
-html.doki .starter.sel { border-color: #ff5fa2; box-shadow: 0 0 0 2px #fff, 0 0 0 6px rgba(255, 95, 162, .3), 0 5px 0 #f3a6c8; }
-html.doki .relic-slot.empty, html.doki .cons-slot.empty { background: rgba(255, 255, 255, .5); border: 3px dashed #ffc4df; box-shadow: none; }
-html.doki .price { border: 2px solid #ffc4df; background: #fff8e6; color: #c47a00; box-shadow: none; }
-html.doki .tix-pill, html.doki .ach-pill { border: 2px solid #ffc4df; background: #fff; box-shadow: none; }
-html.doki #tooltip, html.doki .toast { border: 3px solid #ffb3d6; border-radius: 14px; background: #fffafd; color: var(--text); box-shadow: inset 0 4px 0 #ff8cc0, 0 10px 26px rgba(150, 30, 100, .25); }
-html.doki .toast.bad { box-shadow: inset 0 4px 0 var(--mult), 0 10px 26px rgba(150, 30, 100, .25); }
-html.doki kbd { background: #fff; color: #8a3a76; border: 2px solid #ffc4df; box-shadow: 0 2px 0 #ffc4df; }
+html.sweet .shop-card:hover:not(.sold), html.sweet .pack-opt:hover, html.sweet .starter:not(.locked):hover { box-shadow: 0 0 0 2px #fff, 0 0 0 5px color-mix(in srgb, var(--rc, #ff5fa2) 30%, transparent), 0 8px 0 color-mix(in srgb, var(--rc, #f3a6c8) 45%, #f3c0da) !important; }
+html.sweet .starter { --rc: #ff8cc0; }
+html.sweet .starter.sel { border-color: #ff5fa2; box-shadow: 0 0 0 2px #fff, 0 0 0 6px rgba(255, 95, 162, .3), 0 5px 0 #f3a6c8; }
+html.sweet .relic-slot.empty, html.sweet .cons-slot.empty { background: rgba(255, 255, 255, .5); border: 3px dashed #ffc4df; box-shadow: none; }
+html.sweet .price { border: 2px solid #ffc4df; background: #fff8e6; color: #c47a00; box-shadow: none; }
+html.sweet .tix-pill, html.sweet .ach-pill { border: 2px solid #ffc4df; background: #fff; box-shadow: none; }
+html.sweet #tooltip, html.sweet .toast { border: 3px solid #ffb3d6; border-radius: 14px; background: #fffafd; color: var(--text); box-shadow: inset 0 4px 0 #ff8cc0, 0 10px 26px rgba(150, 30, 100, .25); }
+html.sweet .toast.bad { box-shadow: inset 0 4px 0 var(--mult), 0 10px 26px rgba(150, 30, 100, .25); }
+html.sweet kbd { background: #fff; color: #8a3a76; border: 2px solid #ffc4df; box-shadow: 0 2px 0 #ffc4df; }
 
 /* bars, the board frame, the Workshop shelf */
-html.doki .bar { border: 2px solid #ffb3d6; border-radius: 99px; background: #fff; box-shadow: none; }
-html.doki .bar-fill { -webkit-mask: none; mask: none; border-radius: 99px; background: linear-gradient(90deg, #ff9cc8, #ff5fa2) !important; box-shadow: inset 0 2px 0 rgba(255, 255, 255, .5); }
-html.doki .board-wrap { border: 3px solid #fff; border-radius: 14px; box-shadow: 0 0 0 4px #ffb3d6, 0 0 0 7px #fff, 0 8px 0 7px #f3a6c8; }
-html.doki .shop-section .shop-row::after { border: 0; border-radius: 99px; background: repeating-linear-gradient(90deg, #ffb3d6 0 14px, #fff 14px 28px); box-shadow: 0 3px 0 #f3a6c8; }
+html.sweet .bar { border: 2px solid #ffb3d6; border-radius: 99px; background: #fff; box-shadow: none; }
+html.sweet .bar-fill { -webkit-mask: none; mask: none; border-radius: 99px; background: linear-gradient(90deg, #ff9cc8, #ff5fa2) !important; box-shadow: inset 0 2px 0 rgba(255, 255, 255, .5); }
+html.sweet .board-wrap { border: 3px solid #fff; border-radius: 14px; box-shadow: 0 0 0 4px #ffb3d6, 0 0 0 7px #fff, 0 8px 0 7px #f3a6c8; }
+html.sweet .shop-section .shop-row::after { border: 0; border-radius: 99px; background: repeating-linear-gradient(90deg, #ffb3d6 0 14px, #fff 14px 28px); box-shadow: 0 3px 0 #f3a6c8; }
 
 /* achievements */
-html.doki .ach-pop { border: 3px solid #fff; border-radius: 18px; background: linear-gradient(180deg, #fff, #ffeef7); box-shadow: 0 0 0 3px #ffb3d6, 0 6px 0 #f3a6c8, 0 18px 40px rgba(150, 30, 100, .3); }
-html.doki .ach-txt b, html.doki .ach-body b { color: #8a3a76; text-shadow: none; }
-html.doki .ach-card { border: 3px solid #ffc4df; background: #fff; box-shadow: 0 4px 0 #f3c0da; }
-html.doki .ach-card.got { border-color: #ff9cc8; background: linear-gradient(180deg, #fff6fb, #fff); }
-html.doki .ach-card:not(.got) .ach-body b { color: #b08aa8; }
-html.doki .ach-card .ach-medal { border: 2px solid #ffc4df; background: #fff0f7; box-shadow: none; }
-html.doki .ach-card .ach-medal .gi { fill: #e0a8c8; }
-html.doki .ach-medal, html.doki .ach-card.got .ach-medal { border: 2px solid #fff; border-radius: 50%; background: linear-gradient(180deg, #ffa3cd, #ff5fa2); box-shadow: 0 0 0 2px #ff9cc8; }
-html.doki .ach-medal .gi, html.doki .ach-card.got .ach-medal .gi { fill: #fff; filter: none; }
+html.sweet .ach-pop { border: 3px solid #fff; border-radius: 18px; background: linear-gradient(180deg, #fff, #ffeef7); box-shadow: 0 0 0 3px #ffb3d6, 0 6px 0 #f3a6c8, 0 18px 40px rgba(150, 30, 100, .3); }
+html.sweet .ach-txt b, html.sweet .ach-body b { color: #8a3a76; text-shadow: none; }
+html.sweet .ach-card { border: 3px solid #ffc4df; background: #fff; box-shadow: 0 4px 0 #f3c0da; }
+html.sweet .ach-card.got { border-color: #ff9cc8; background: linear-gradient(180deg, #fff6fb, #fff); }
+html.sweet .ach-card:not(.got) .ach-body b { color: #b08aa8; }
+html.sweet .ach-card .ach-medal { border: 2px solid #ffc4df; background: #fff0f7; box-shadow: none; }
+html.sweet .ach-card .ach-medal .gi { fill: #e0a8c8; }
+html.sweet .ach-medal, html.sweet .ach-card.got .ach-medal { border: 2px solid #fff; border-radius: 50%; background: linear-gradient(180deg, #ffa3cd, #ff5fa2); box-shadow: 0 0 0 2px #ff9cc8; }
+html.sweet .ach-medal .gi, html.sweet .ach-card.got .ach-medal .gi { fill: #fff; filter: none; }
 
 /* the play screen's own colours */
-html.doki .hud, html.doki .pl-left, html.doki .pl-right, html.doki .pl-hold { color: var(--text); }
+html.sweet .hud, html.sweet .pl-left, html.sweet .pl-right, html.sweet .pl-hold { color: var(--text); }
 /* the smaller dark wells inside plates */
-html.doki .nr-bag, html.doki .sc-target, html.doki .rule, html.doki .pl-rule, html.doki .tally, html.doki .gloss-item, html.doki .coll-item.unknown, html.doki #screen input:not([type=range]):not([type=checkbox]) {
+html.sweet .nr-bag, html.sweet .sc-target, html.sweet .rule, html.sweet .pl-rule, html.sweet .tally, html.sweet .gloss-item, html.sweet .coll-item.unknown, html.sweet #screen input:not([type=range]):not([type=checkbox]) {
   background: #fff3f9; border-color: #ffd0e6; color: var(--text); box-shadow: inset 0 2px 0 rgba(255, 160, 205, .25);
 }
-html.doki .rule.boss-rule { background: #fff0f3; }
-html.doki .tally .x, html.doki .tally i { color: #c0397f; }
-html.doki .pl-clock { background: linear-gradient(180deg, #ff9cc8, #ff6fae); color: #fff; border-color: #fff; box-shadow: 0 0 0 2px #ffb3d6, 0 4px 0 #d9488f; -webkit-text-stroke: 3px #c0397f; paint-order: stroke fill; }
-html.doki .pip { background: #fff; border-color: #ffb3d6; color: #c0397f; }
-html.doki .pip.fin { background: #ffe3f0; }
-html.doki .sc-ribbon, html.doki .stack-card .sc-ribbon { background: #ff8cc0 !important; color: #fff !important; border-color: #fff !important; }
-html.doki .prize-tab.on { background: linear-gradient(180deg, #ff9cc8, #ff6fae); color: #fff; border-color: #fff; -webkit-text-stroke: 3px #c0397f; paint-order: stroke fill; }
-html.doki canvas.hold-cv, html.doki canvas.next-cv { background: #3a1d3e; border-radius: 10px; }
-html.doki .board-wrap { background: #3a1d3e; }
-html.doki .mi-label { color: inherit; }
-html.doki .sr { color: transparent; }
-html.doki #logoCv { filter: saturate(.62) brightness(1.12) drop-shadow(0 5px 0 rgba(243, 166, 200, .9)); }
-html.doki .go-stats div { background: #fff3f9 !important; border: 2px solid #ffd0e6; box-shadow: none; }
-html.doki .lv { background: #ffd0e6; color: #8a3a76; }
-html.doki { --dim: #8d6585; }
+html.sweet .rule.boss-rule { background: #fff0f3; }
+html.sweet .tally .x, html.sweet .tally i { color: #c0397f; }
+html.sweet .pl-clock { background: linear-gradient(180deg, #ff9cc8, #ff6fae); color: #fff; border-color: #fff; box-shadow: 0 0 0 2px #ffb3d6, 0 4px 0 #d9488f; -webkit-text-stroke: 3px #c0397f; paint-order: stroke fill; }
+html.sweet .pip { background: #fff; border-color: #ffb3d6; color: #c0397f; }
+html.sweet .pip.fin { background: #ffe3f0; }
+html.sweet .sc-ribbon, html.sweet .stack-card .sc-ribbon { background: #ff8cc0 !important; color: #fff !important; border-color: #fff !important; }
+html.sweet .prize-tab.on { background: linear-gradient(180deg, #ff9cc8, #ff6fae); color: #fff; border-color: #fff; -webkit-text-stroke: 3px #c0397f; paint-order: stroke fill; }
+html.sweet canvas.hold-cv, html.sweet canvas.next-cv { background: #3a1d3e; border-radius: 10px; }
+html.sweet .board-wrap { background: #3a1d3e; }
+html.sweet .mi-label { color: inherit; }
+html.sweet .sr { color: transparent; }
+html.sweet #logoCv { filter: saturate(.62) brightness(1.12) drop-shadow(0 5px 0 rgba(243, 166, 200, .9)); }
+html.sweet .go-stats div { background: #fff3f9 !important; border: 2px solid #ffd0e6; box-shadow: none; }
+html.sweet .lv { background: #ffd0e6; color: #8a3a76; }
+html.sweet { --dim: #8d6585; }

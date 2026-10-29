@@ -1552,10 +1552,9 @@ html, body { font-weight: var(--w-body); }
 .payout button.big { font-size: clamp(14px, 4.1vw, 17px); }
 
 /* ======================================================================================
-   v21 menus. Borrowed with care from games people love: one column of entries and a cursor
-   that slides between them (Celeste, Hollow Knight), arrow keys and Enter on every menu
-   (Slay the Spire), a payout that counts itself up (Balatro), records called out on game
-   over (Dead Cells). Same calm surfaces as v18; only the cursor moves.
+   v21 menus: one column of entries and a cursor that slides between them, arrow keys and
+   Enter on every menu, a payout that counts itself up, records called out on game over.
+   Same calm surfaces as v18; only the cursor moves.
    ====================================================================================== */
 .mlist { position: relative; display: flex; flex-direction: column; gap: 2px; width: min(360px, 100%); margin: 0 auto; }
 .mlist .mcursor { position: absolute; left: 0; right: 0; top: 0; height: 48px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--edge-hi); box-shadow: 0 3px 0 var(--lip); pointer-events: none; z-index: 0; transition: transform .22s cubic-bezier(.2, .9, .3, 1.15), height .22s; }

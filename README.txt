@@ -1,4 +1,4 @@
-STACKBOUND - a Tetris roguelike
+STACKBOUND - a falling-block roguelike
 ================================
 
 HOW TO PLAY
@@ -101,8 +101,8 @@ INSTALL IT AS A PHONE APP
   and .nojekyll (lets GitHub Pages serve the folder as it is).
 
 THE LOOP
-  Climb the Tower: 8 Floors, each one Stack I, Stack II and a Warden Stack. Every Stack is Tetris
-  with a score target and a 5:00 clock. Every line clear scores MASS x CHARGE. Hit the target
+  Climb the Tower: 8 Floors, each one Stack I, Stack II and a Warden Stack. Every Stack is endless
+  falling-block play with a score target and a 5:00 clock. Every line clear scores MASS x CHARGE. Hit the target
   before the clock runs out, then Bank or Push On for more money. A Push On resets your score to
   0, adds 1:00 to the clock and sets a fresh goal: 60%, then 90%, then 130% of the target.
   Topping out or running out of time while pushing ends the run. Beat the Floor 8 Warden to reach
@@ -114,7 +114,7 @@ THE CLOCK
   every line cleared adds 5 seconds) and Sudden Death (1:30, target 40% lower). The Deadline
   (a Warden) gives you only 2:00.
   Ways to get time back: Alarm Clock curio (+45 seconds every Stack), Borrowed Time (+10 seconds
-  per Tetris), Chronoshard (+2 seconds per line), Time is Money (unused time pays when you Bank),
+  per Quad), Chronoshard (+2 seconds per line), Time is Money (unused time pays when you Bank),
   the Long Fuse Schematic (+30 seconds every Stack), Hourglass pieces (their seconds go back on
   the clock) and the Freeze Glyph (stops gravity and the clock for 6 seconds).
   Between Stacks you visit the Workshop for Curios (scored left to right), Patterns, Glyphs, Rifts,
@@ -144,9 +144,9 @@ THE RIVAL (Endless only)
   pieces about 6% faster than your best pieces-per-second over any Stack, clears on the rhythm of
   your quickest Stack (time between clears) and goes for the clear size you use most.
   While it stands, your clears score nothing (money and other effects still happen) and the clock
-  keeps running. Your clears send it garbage, guideline style: a Double 1, Triple 2, Tetris 4,
-  T-Spins 2/4/6, +1 for back-to-back and more for combos, an All Clear 10. Its clears send you
-  garbage (half a line for a Single, 1 for a Double or Triple, 2 for a Tetris); it waits in the
+  keeps running. Your clears send it garbage, by a fixed table: a Double 1, Triple 2, Quad 4,
+  Twists 2/4/6, +1 for a Repeat and more for combos, an All Clear 10. Its clears send you
+  garbage (half a line for a Single, 1 for a Double or Triple, 2 for a Quad); it waits in the
   red bar beside your board and rises from the bottom when you lock a piece without clearing,
   with one hole per batch. Your clears cancel garbage headed for you before any reaches the Rival.
   Fill its board to the top and it is knocked out: +$3, and every clear scores again.
@@ -155,7 +155,7 @@ WORDS STACKBOUND USES
   Mass x Charge ...... the two halves of every score (Mass from the clear and its blocks,
                        Charge from how hard the clear hits)
   Floor .............. one level of the Tower (3 Stacks)
-  Warden ............. the boss Stack that ends each Floor and breaks a rule of Tetris
+  Warden ............. the boss Stack that ends each Floor and breaks a rule of the game
   Bank / Push On ..... take the reward now, or raise the target for more money
   Workshop ........... where you spend money between Stacks; Restock rerolls its shelves
   Hazard ............. difficulty level, 1 to 9, plus the secret Hellscape
@@ -164,6 +164,9 @@ WORDS STACKBOUND USES
   Pocket ............. holds Patterns, Glyphs and Rifts until you use them
   Schematic .......... a permanent upgrade for the rest of the run
   Savings ............ $1 for every $7 you hold at the end of a Stack (max $5)
+  Quad ............... clearing four lines at once
+  Twist .............. a clear made by turning a T piece into a tight slot
+  Repeat ............. a Quad or Twist straight after another one, for +2 Charge
 
 WHAT'S IN THIS BUILD
   7 Builders (2 unlocked, 5 unlockable), 9 Hazard levels and the secret Hellscape
@@ -182,7 +185,8 @@ PRIZE COUNTER (pass 16, outside runs)
   as it won at least one Stack (so quitting a run straight away pays nothing). In Endless, every 30
   Stacks cleared pays another Ticket on the spot. The title screen's Prize Counter spends them.
   Everything there is looks only and changes nothing about scoring:
-  - Piece skins (pass 17 themes, each piece drawn as one object): Classic (free), Pixel 1,
+  - Piece skins (pass 17 themes, each piece drawn as one object): Slab (free, the house look),
+    Gloss (free), Pixel 1,
     Toy Brick 2, Neon Sign 2, Bakery 2, Skyline 3, Steampunk 3, Castle 3. Material blocks (Gold,
     Glass, Steel and the rest) keep their own look so they still read at a glance.
   - Clear effects: Classic (free), Shatter 1, Confetti 1, Lightning 2, Fireworks 3, Dissolve 2.
@@ -192,6 +196,20 @@ PRIZE COUNTER (pass 16, outside runs)
   - Backdrops: Neon City (free), Retro Sunset 2, Night Peaks 2, Deep Space 3. Try it shows it live.
   Buying something equips it. Leaving the screen puts back whatever you have equipped.
   The currency is called Tickets because Tokens are already the skip rewards inside a run.
+
+NEW IN PASS 35 (own identity for the App Store)
+  - New names: the four-line clear is a Quad, a T-piece spin clear is a Twist, and a Quad or Twist
+    right after another is a Repeat. Curios, achievements, stats and sounds use the new names
+    (Tetromancer is now Fourcaster, Tetris Tax is Quad Tax, Back to Back is Double Feature).
+  - The seven starting pieces have new colours: I rose, O teal, T amber, S violet, Z lime, L sky
+    blue, J bone.
+  - The board starts 11 wide and 22 tall (same shape on screen). Wide, Narrow, Tall and the Giant
+    follow it: 13 wide, 9 wide, 26 tall and 13 wide.
+  - Slab is the new house look for pieces: matte, one ink outline round each piece. The old glossy
+    blocks are still in the Prize Counter as Gloss.
+  - The landing guide is a dotted chalk outline with a faint wash instead of a see-through copy.
+  - The dating game's style is now the Sweetheart style, and the finale is a thank-you from Elle.
+  - Saves carry over: old stats, curios, achievements and settings are renamed on load.
 
 NEW IN PASS 34
   - Workshop: a Last Stack button opens the score breakdown of every clear from the Stack you just
@@ -218,7 +236,7 @@ NEW IN PASS 32
 NEW IN PASS 31
   - Curio pictures are centred by how they look, not just by their outline: each one is pulled toward
     its visual weight, so lopsided pictures (Clean Sheet's broom, Loupe, Graffiti, Low Rider) sit in
-    the middle. Curios with a corner badge (Tetromancer, Single Minded, Low Rider...) no longer push
+    the middle. Curios with a corner badge (Fourcaster, Single Minded, Low Rider...) no longer push
     their picture up and to the left; it stays centred and the badge sits over the corner.
   - The Workshop keeper is back in his apron with the pencil in the pocket and the wrench in hand,
     now without the hard hat.
@@ -257,12 +275,12 @@ NEW IN PASS 29
     Adrenaline and Atlas.
   - Endless targets grow 10% faster: each Floor past 8 multiplies the target by x3.3, then x3.685,
     x4.07 and so on (was x3, x3.35, x3.7).
-  - The score breakdown names what made a curio score again, e.g. "Tetromancer (Tailwind)" or
-    "Tetromancer (Standing Ovation)".
+  - The score breakdown names what made a curio score again, e.g. "Fourcaster (Tailwind)" or
+    "Fourcaster (Standing Ovation)".
   - The Collection shows all 160 curios, Yolk included, while this build has everything open.
     Tap or hover one to read what it does.
   - Tutorial > Scoring order (the last lesson): the order every clear adds up in, and a worked
-    Tetris you can swap two curios in to see why +Charge belongs left of xCharge. How to play
+    Quad you can swap two curios in to see why +Charge belongs left of xCharge. How to play
     section 2 lists the order too.
 
 NEW IN PASS 28
@@ -280,7 +298,7 @@ NEW IN PASS 27
       1 Calm: Smooth Sailing, Still Water (Uncommon): x2 Charge at speed level 3 or lower.
       2 Lean: Belt Tightener, Lean Season (Uncommon): skipping a Stack also pays its base reward +$2.
       3 Tense: Nerves of Steel, Tension Spring (Uncommon): +3 Charge per clear since your last
-        Tetris, paid out on the next Tetris.
+        Quad, paid out on the next Quad.
       4 Cursed: Curse Breaker, Hex Ward (Rare): Void cells give x2 Charge instead of scoring 0.
       5 Taxed: Tax Return, Receipt (Uncommon): +1 Charge per $2 spent in the last Workshop.
       6 Sparse: Slim Pickings, Minimalist (Rare): x1.5 Charge per empty curio slot.
@@ -321,11 +339,11 @@ NEW IN PASS 25
       Cranked: score a clear with 100 Charge or more. Opens Amplifier.
       Close Shave: reach a Stack's target with 5 seconds or less left. Opens the Clockwork sounds.
       Big Spender: spend $40 in one Workshop visit. Opens the Till sounds.
-      Spin Class: clear 25 T-Spins. Opens the Arcade sounds.
+      Spin Class: clear 25 Twists. Opens the Arcade sounds.
       Cell Block: clear 3 Board Pack cells in one clear. Opens the Chimes sounds.
       Hidden: Hatchling (now hidden), Trust Fall (opens Blindfold), Pacifist (Felt sounds),
       Butterfingers (Squeaky Toy sounds), Night Shift (Laser sounds), Secret Admirer (the Love
-      Letter), Four Hearts (the Doki Doki style) and Credits Roll.
+      Letter), Four Hearts (the Sweetheart style) and Credits Roll.
   - 18 new curios built to combine with other curios or reward odd ways of playing. Five of them
     (28%) are opened by achievements.
       Common: Honeycomb (+2 Charge per hole in your stack), Hot Potato (+8 Charge when the piece
@@ -339,15 +357,15 @@ NEW IN PASS 25
         seconds or less left).
       Rare: Bookends (your leftmost and rightmost curios score twice), Blindfold (no ghost, no
         preview; x3 Charge), Kintsugi (each Glass crack pays $2 and adds x0.25 Charge), Small Print
-        (Singles count as Tetrises), Matching Set (x3 Charge when all your other curios share a tag),
+        (Singles count as Quads), Matching Set (x3 Charge when all your other curios share a tag),
         Chameleon (copies a random curio you don't own, new each Stack).
   - Sounds: a new Prize Counter tab with 12 sound packs that change the sounds of moving, turning,
-    holding, landing, hard drops, clears, Tetrises and menu clicks. Classic, Woodshop, Drum Kit and
+    holding, landing, hard drops, clears, Quads and menu clicks. Classic, Woodshop, Drum Kit and
     Typewriter are bought with Tickets; Arcade, Chimes, Clockwork, Felt, Till, Laser, Squeaky Toy
-    and Doki Doki are opened by achievements. Listen plays a short demo of each.
+    and Sweetheart are opened by achievements. Listen plays a short demo of each.
   - A secret code entered during a Stack earns Secret Admirer and puts a Love Letter in your Pocket
     for the rest of the run (in a slot of its own). Use it to open Falling for You, the dating game.
-    Mid-Stack, the Stack waits until you close it. The Doki Doki style it unlocks is switched on and
+    Mid-Stack, the Stack waits until you close it. The Sweetheart style it unlocks is switched on and
     off in Settings or the pause menu.
   - No emoji anywhere: arrows, keys, ticks and buttons are drawn marks now, and the Workshop pack art
     (Crate of Pieces and the rest) is redrawn flat and inked.
@@ -428,7 +446,7 @@ NEW IN PASS 20
       Curios: Coupon -> Punch Card, Reroller -> First Dibs, Midas -> Gilt Edge, Counter -> Odometer,
         Spinner -> Whirligig, Left Hand -> Portside, Right Hand -> Starboard, Centrist -> Bullseye,
         Collector -> Menagerie, Shiny -> Greenhouse, Stacker -> High Rise, All In -> Blank Canvas,
-        Omega -> The Maw, Tetris Supreme -> Standing Ovation, Philosopher's Stone -> Electrum,
+        Omega -> The Maw, the four-line Supreme -> Standing Ovation, Philosopher's Stone -> Electrum,
         Pocket Watch -> Snooze Button
 
 NEW IN PASS 19
@@ -522,7 +540,7 @@ TUNING NOTES (changes from the concept doc numbers, made so runs stay playable)
     clear too and score as a cascade.
   - Stasis: a full line holding a Stasis block does not clear. It stays on the board, shimmering
     blue, until some other line clears; then every held line clears together with it and counts
-    toward that clear (a held Double plus a Double is a Tetris). Each held line adds +2/+4/+6/+9
+    toward that clear (a held Double plus a Double is a Quad). Each held line adds +2/+4/+6/+9
     Charge at Lv1/Lv5/Lv10/Lv15. Waiting lines don't break your combo, but they do take up room.
   - Money (pass 8, about 16% less per Floor): Warden reward $4 (was $5), Push On pays $2/$6/$10
     (was $3/$7/$12), the time bonus is $1 per 18s under par up to $4 (was 15s, up to $5), Savings

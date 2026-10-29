@@ -149,9 +149,9 @@
     if (steel) ctx.xmult(Math.pow(has('steel_nerves') ? 1.3 : 1.2, Math.min(steel, 40)), `Steel on board (${steel})`);
     if (g.mod === 'luckyday' && SB.chance(1 / 3)) ctx.mult(10, 'Lucky Day');
 
-    // 5. Combo & back-to-back
+    // 5. Combo & repeat
     if (info.combo > 0) ctx.mult(info.combo * (run.levels.combo || 1), `Combo x${info.combo}`);
-    if (info.b2b) ctx.mult(2, 'Back-to-back');
+    if (info.b2b) ctx.mult(2, 'Repeat');
 
     // 6. Piece track
     const p = info.piece;
@@ -160,10 +160,10 @@
     ctx.icon = SB.uiIco('levels');
     // Lv5 and Lv10 bonuses depend on the shape; Lv15 is x2 Charge for every shape
     if (p.shape === 'I') {
-      if (L >= 5 && info.isTetris) ctx.chips(40, 'I Lv.5');
-      if (L >= 10 && info.isTetris) ctx.xmult(2, 'I Lv.10');
+      if (L >= 5 && info.isQuad) ctx.chips(40, 'I Lv.5');
+      if (L >= 10 && info.isQuad) ctx.xmult(2, 'I Lv.10');
     } else if (p.shape === 'T') {
-      if (L >= 5 && info.tspin) ctx.mult(6, 'T Lv.5');
+      if (L >= 5 && info.twist) ctx.mult(6, 'T Lv.5');
     } else if (p.shape === 'O') {
       if (L >= 5) ctx.money(1, 'O Lv.5');
     } else if (p.shape === 'S' || p.shape === 'Z') {
@@ -234,7 +234,7 @@
       });
     };
     relicPass('');
-    if (info.isTetris && live('tetris_supreme')) relicPass(SB.RELICS.tetris_supreme.name);
+    if (info.isQuad && live('standing_ovation')) relicPass(SB.RELICS.standing_ovation.name);
     if (info.lines >= 5 && live('curtain_call')) relicPass(SB.RELICS.curtain_call.name);
     ctx.icon = SB.uiIco('star');
     ctx.src = '';
@@ -257,6 +257,6 @@
 
     st.mult = Math.max(st.mult, 0);
     const score = Math.floor(st.chips * st.mult);
-    return { score, chips: st.chips, mult: st.mult, log: st.log, money: st.money, name: ct.name, type: info.type, lines: info.lines, b2b: info.b2b, combo: info.combo, tspin: info.tspin };
+    return { score, chips: st.chips, mult: st.mult, log: st.log, money: st.money, name: ct.name, type: info.type, lines: info.lines, b2b: info.b2b, combo: info.combo, twist: info.twist };
   };
 })(window.SB);

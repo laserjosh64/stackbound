@@ -11,17 +11,17 @@
   const won = (m, n) => !!(m.hazardsWon && m.hazardsWon[n]);
   SB.ACHIEVEMENTS = [
     A('first_stack', 'Ground Floor', 'stairs', 'Clear your first Stack', (m, s) => s.stacks >= 1),
-    A('first_tetris', 'Four Across', 'i-brick', 'Clear a Tetris', (m) => m.tetrises >= 1),
+    A('first_quad', 'Four Across', 'i-brick', 'Clear a Quad', (m) => m.quads >= 1),
     A('warden', 'Warden Breaker', 'medal-skull', 'Defeat a Warden', (m, s) => s.wardens >= 1),
     A('floor3', 'Third Floor', 'ladder', 'Reach Floor 3', (m) => m.bestAnte >= 3, { reward: { starter: 'glassblower' } }),
     A('floor5', 'Halfway Up', 'mountain-road', 'Reach Floor 5', (m) => m.bestAnte >= 5, { reward: { starter: 'giant' } }),
-    A('tetris25', 'Tetris Habit', 'star-medal', 'Clear 25 Tetrises', (m) => m.tetrises >= 25, { prog: (m) => [m.tetrises, 25], reward: { starter: 'purist' } }),
+    A('quad25', 'Quad Habit', 'star-medal', 'Clear 25 Quads', (m) => m.quads >= 25, { prog: (m) => [m.quads, 25], reward: { starter: 'purist' } }),
     A('pocket12', 'Well Stocked', 'swap-bag', 'Use 12 Pocket items', (m) => m.consumablesUsed >= 12, { prog: (m) => [m.consumablesUsed, 12], reward: { starter: 'alchemist' } }),
     A('push10', 'Pushover', 'upgrade', 'Complete 10 Push Ons', (m) => m.pushes >= 10, { prog: (m) => [m.pushes, 10], reward: { starter: 'gambler' } }),
     A('push3', 'No Brakes', 'rolling-energy', 'Complete 3 Push Ons in one Stack', (m, s) => s.bestPushes >= 3, { prog: (m, s) => [s.bestPushes, 3], reward: { curio: 'egg' } }),
     A('sprint', 'Sprinter', 'sprint', "Reach a Stack's target within 45 seconds", (m, s) => s.fastTarget <= 45, { reward: { curio: 'starting_gun' } }),
     A('allclear', 'Clean Slate', 'sparkles', 'Clear the whole board', (m, s) => s.allClears >= 1, { reward: { curio: 'bedrock' } }),
-    A('tspin', 'Twist Ending', 'whirlwind', 'Clear a T-Spin Double', (m, s) => s.tspinDoubles >= 1, { reward: { curio: 'spin_doctor' } }),
+    A('twist', 'Twist Ending', 'whirlwind', 'Clear a Twist Double', (m, s) => s.twistDoubles >= 1, { reward: { curio: 'spin_doctor' } }),
     A('combo', 'Chain Gang', 'linked-rings', 'Reach a x6 combo', (m, s) => s.bestCombo >= 6, { prog: (m, s) => [s.bestCombo, 6], reward: { curio: 'ouroboros' } }),
     A('rich', 'Deep Pockets', 'wallet', 'Hold $60 at once', (m, s) => s.bestMoney >= 60, { prog: (m, s) => [s.bestMoney, 60], reward: { pack: 'trophy' } }),
     A('fullhouse', 'Full House', 'open-treasure-chest', 'Fill every curio slot', (m, s) => s.fullCurios >= 1, { reward: { blueprint: 'trophy_shelf' } }),
@@ -47,17 +47,17 @@
     A('cranked', 'Cranked', 'gear-stick', 'Score a clear with 100 Charge or more', (m, s) => s.bestCharge >= 100, { prog: (m, s) => [s.bestCharge, 100], reward: { curio: 'amplifier' } }),
     A('close', 'Close Shave', 'razor', "Reach a Stack's target with 5 seconds or less on the clock", (m, s) => s.closeShaves >= 1, { reward: { sound: 'clockwork' } }),
     A('spender', 'Big Spender', 'shopping-cart', 'Spend $40 in one Workshop visit', (m, s) => s.shopSpend >= 40, { prog: (m, s) => [s.shopSpend, 40], reward: { sound: 'till' } }),
-    A('spin', 'Spin Class', 'cycling', 'Clear 25 T-Spins', (m, s) => s.tspins >= 25, { prog: (m, s) => [s.tspins, 25], reward: { sound: 'arcade' } }),
+    A('spin', 'Spin Class', 'cycling', 'Clear 25 Twists', (m, s) => s.twists >= 25, { prog: (m, s) => [s.twists, 25], reward: { sound: 'arcade' } }),
     A('cellblock', 'Cell Block', 'prisoner', 'Clear 3 Board Pack cells in one clear', (m, s) => s.cellClears >= 1, { reward: { sound: 'chimes' } }),
     A('over', 'Overachiever', 'achievement', 'Earn 12 other achievements', (m, s, n) => n >= 12, { prog: (m, s, n) => [n, 12], reward: { curio: 'overachiever' } }),
     // hidden: ??? until earned
     A('hatch', 'Hatchling', 'nest-eggs', 'Hatch The Egg', (m) => (m.eggsHatched || 0) >= 1, { hidden: true, reward: { curio: 'phoenix_feather' } }),
-    A('trust', 'Trust Fall', 'falling', 'Clear a Tetris with a piece you never moved or rotated', (m, s) => s.trustFalls >= 1, { hidden: true, reward: { curio: 'blindfold' } }),
+    A('trust', 'Trust Fall', 'falling', 'Clear a Quad with a piece you never moved or rotated', (m, s) => s.trustFalls >= 1, { hidden: true, reward: { curio: 'blindfold' } }),
     A('pacifist', 'Pacifist', 'peace-dove', 'Clear a Stack without a single hard drop', (m, s) => s.softStacks >= 1, { hidden: true, reward: { sound: 'felt' } }),
     A('butter', 'Butterfingers', 'banana-peel', 'Top out in the first 20 seconds of a Stack', (m, s) => s.quickTopouts >= 1, { hidden: true, reward: { sound: 'rubber' } }),
     A('night', 'Night Shift', 'moon', 'Clear a line at speed level 15 or higher', (m, s) => s.bestLevel >= 15, { hidden: true, reward: { sound: 'laser' } }),
     A('admirer', 'Secret Admirer', 'heart-key', 'Enter the secret code during a Stack', (m, s) => s.secretCode >= 1, { hidden: true, reward: { item: 'love_letter' } }),
-    A('four_hearts', 'Four Hearts', 'hearts', 'Reach the True End on all four routes of Falling for You', (m) => !!(SB.Dating && SB.Dating.clearedCount && SB.Dating.clearedCount(m) >= 4), { hidden: true, reward: { style: 'doki' } }),
+    A('four_hearts', 'Four Hearts', 'hearts', 'Reach the True End on all four routes of Falling for You', (m) => !!(SB.Dating && SB.Dating.clearedCount && SB.Dating.clearedCount(m) >= 4), { hidden: true, reward: { style: 'sweet' } }),
     A('flyer', 'Frequent Flyer', 'feathered-wing', 'Score 15 in Flutter', (m, s) => s.flutterBest >= 15, { hidden: true, prog: (m, s) => [s.flutterBest, 15], reward: { curio: 'paper_plane' } }),
     A('nine', 'Nine Circles', 'fire-ring', 'Win a run on each of Hazards 1 to 9', (m) => [1, 2, 3, 4, 5, 6, 7, 8, 9].every((n) => won(m, n)), { hidden: true, prog: (m) => [[1, 2, 3, 4, 5, 6, 7, 8, 9].filter((n) => won(m, n)).length, 9], reward: { curio: 'devils_bargain' }, also: 'Hellscape, Hazard 10' }),
     A('hell', "Hell's Survivor", 'burning-skull', 'Win a run on Hellscape', (m) => won(m, 10), { hidden: true, reward: { curio: 'devilled_egg' }, also: 'The Hellscape looks' }),
@@ -79,8 +79,8 @@
   }
 
   const COUNTERS = {
-    stacks: 0, wardens: 0, bestPushes: 0, fastTarget: 9999, allClears: 0, tspinDoubles: 0, bestCombo: 0, bestMoney: 0, fullCurios: 0, bestWinStake: 0, endlessBest: 0, titleSecret: 0,
-    bestClear: 0, tightClears: 0, garbageRows: 0, heldClears: 0, allRarities: 0, bestCharge: 0, closeShaves: 0, shopSpend: 0, tspins: 0, cellClears: 0,
+    stacks: 0, wardens: 0, bestPushes: 0, fastTarget: 9999, allClears: 0, twistDoubles: 0, bestCombo: 0, bestMoney: 0, fullCurios: 0, bestWinStake: 0, endlessBest: 0, titleSecret: 0,
+    bestClear: 0, tightClears: 0, garbageRows: 0, heldClears: 0, allRarities: 0, bestCharge: 0, closeShaves: 0, shopSpend: 0, twists: 0, cellClears: 0,
     trustFalls: 0, softStacks: 0, quickTopouts: 0, bestLevel: 0, secretCode: 0, flutterBest: 0,
   };
   const store = () => {
@@ -119,7 +119,7 @@
     if (a.rkind === 'blueprint') { const d = SB.BLUEPRINTS[id]; return { kind: 'Schematic', name: d.name, art: d.art || d.icon, desc: d.desc }; }
     if (a.rkind === 'sound') { const d = SB.COSMETICS.sound.items[id]; return { kind: 'Sound pack', name: d.name, art: SB.SFX.art(id), desc: d.desc }; }
     if (a.rkind === 'item') { const d = SB.SECRET_ITEMS[id]; return { kind: 'Pocket item', name: d.name, art: d.icon, desc: d.desc }; }
-    if (a.rkind === 'style') return { kind: 'Style', name: 'Doki Doki', art: SB.ico('hearts'), desc: 'A whole new look for the game, from Settings' };
+    if (a.rkind === 'style') return { kind: 'Style', name: 'Sweetheart', art: SB.ico('hearts'), desc: 'A whole new look for the game, from Settings' };
     const d = SB.STARTERS[id];
     return { kind: 'Builder', name: d.name, art: d.icon, desc: d.desc };
   };
@@ -157,14 +157,14 @@
     Ach.flush();
     return got;
   };
-  // a cleared line: lifetime lines, All Clears, T-Spins, the best combo, the biggest clear, clears near the top,
-  // garbage, Hold, untouched Tetrises, Board Pack cells, speed and the biggest Charge
+  // a cleared line: lifetime lines, All Clears, Twists, the best combo, the biggest clear, clears near the top,
+  // garbage, Hold, untouched Quads, Board Pack cells, speed and the biggest Charge
   Ach.onClear = function (info, res) {
     const m = SB.meta.data;
     m.lines = (m.lines || 0) + info.lines;
     if (info.allclear) Ach.bump('allClears');
-    if (info.tspin) Ach.bump('tspins');
-    if (info.tspin && info.lines >= 2) Ach.bump('tspinDoubles');
+    if (info.twist) Ach.bump('twists');
+    if (info.twist && info.lines >= 2) Ach.bump('twistDoubles');
     Ach.best('bestCombo', info.combo || 0);
     Ach.best('bestClear', info.lines);
     if (info.room <= 3) Ach.bump('tightClears');

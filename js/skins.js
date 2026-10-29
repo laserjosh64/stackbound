@@ -37,6 +37,36 @@
   const metrics = (S, p, r, i) => ({ p, w: S - 2 * p, r, i, own: true });
 
   const SKINS = {
+    // the house look: each piece is one matte slab with a lit top lip, a deep bottom edge and an ink outline
+    // round the whole shape, like the Blockwork panels; seams between its blocks are only just there
+    slab: {
+      edgy: true,
+      paint(c, S, base, e, lead, seed) {
+        const p = Math.max(1, Math.round(S * 0.035)), r = Math.max(1, S * 0.1);
+        const [x0, y0, x1, y1] = inset(S, e, p);
+        c.fillStyle = shade(base, -0.04); body(c, x0, y0, x1, y1, r, e); c.fill();
+        c.save(); body(c, x0, y0, x1, y1, r, e); c.clip();
+        const lip = Math.max(2, Math.round(S * 0.17)), side = Math.max(1, Math.round(S * 0.08)), deep = Math.max(2, Math.round(S * 0.16));
+        c.fillStyle = shade(base, 0.3);
+        if (e & T) c.fillRect(0, y0, S, lip);
+        if (e & L) c.fillRect(x0, 0, side, S);
+        c.fillStyle = shade(base, -0.42);
+        if (e & B) c.fillRect(0, y1 - deep, S, deep);
+        if (e & R) c.fillRect(x1 - side, 0, side, S);
+        // a fine grain in the slab, fixed per colour so the board doesn't shimmer
+        for (let k = 0; k < 7; k++) {
+          c.fillStyle = hash(seed + k * 17 + e) > 0.5 ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)';
+          c.fillRect(hash(seed * 3 + k * 11 + e) * S, hash(seed * 7 + k * 5 + e) * S, Math.max(1, S * 0.06), Math.max(1, S * 0.03));
+        }
+        c.fillStyle = 'rgba(0,0,0,0.12)';
+        if (!(e & L)) c.fillRect(0, 0, 1, S);
+        if (!(e & T)) c.fillRect(0, 0, S, 1);
+        if (lead) { c.fillStyle = shade(base, 0.55); rr(c, S * 0.38, S * 0.36, S * 0.24, S * 0.12, S * 0.05); c.fill(); }
+        c.restore();
+        outlineOuter(c, S, e, x0, y0, x1, y1, r, shade(base, -0.78), Math.max(1.5, S * 0.07));
+        return metrics(S, p, r, S * 0.15);
+      },
+    },
     // a single sprite per piece: one dark outline round the whole shape, hard highlights, dithered shade
     pixel: {
       edgy: true,

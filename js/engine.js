@@ -1,4 +1,4 @@
-// Stackbound Tetris engine: one Stack of play
+// Stackbound engine: one Stack of play
 'use strict';
 (function (SB) {
   const HID = 4; // hidden rows above the visible board
@@ -807,7 +807,7 @@
         this.forgeNext = 0;
       }
       const cells = this.cellsOf(p);
-      const tspin = this.detectSpin(p);
+      const twist = this.detectSpin(p);
       const pid = ++this.piecesPlaced;
       this.sinceClear = (this.sinceClear || 0) + 1;
       let lowest = 0;
@@ -834,7 +834,7 @@
 
       // on-lock effects
       this.applyLockEffects(p, cells, pid);
-      const cleared = this.processClears(p, tspin, cells);
+      const cleared = this.processClears(p, twist, cells);
       if (this.status !== 'playing' && this.status !== 'choice') return;
       // the Rival's garbage lands when a piece locks without clearing (up to 8 rows at a time, one hole per batch)
       if (!cleared && this.incoming > 0) {
@@ -1056,7 +1056,7 @@
     isTemporalRow(r) { return this.grid[r].some((b) => b && b.spec === 'temporal'); }
     heldRows() { const full = this.fullRows(); return full.length && full.every((r) => this.isTemporalRow(r)) ? full : []; }
 
-    processClears(p, tspin, lockedCells) {
+    processClears(p, twist, lockedCells) {
       let full = this.fullRows();
       const grace = this.stat('comboGrace');
       if (!full.length) {
@@ -1145,13 +1145,13 @@
       const lines = rowList.length;
       this.combo++;
       this.noClearStreak = 0;
-      const difficult = lines >= 4 || (tspin && lines > 0);
+      const difficult = lines >= 4 || (twist && lines > 0);
       const b2b = difficult && this.lastDifficult;
       this.lastDifficult = difficult;
       const shape = p ? p.inst.shape : null;
-      let type = allclear ? 'allclear' : lines >= 5 ? 'penta' : tspin ? 'tspin' : ['single', 'single', 'double', 'triple', 'tetris'][lines];
+      let type = allclear ? 'allclear' : lines >= 5 ? 'penta' : twist ? 'twist' : ['single', 'single', 'double', 'triple', 'quad'][lines];
       const inst = p ? p.inst : null;
-      const isTetris = lines >= 4 || (tspin && lines >= 3 && inst && inst.shape === 'T' && SB.pieceLv(inst) >= 10) || (lines === 1 && this.has('small_print'));
+      const isQuad = lines >= 4 || (twist && lines >= 3 && inst && inst.shape === 'T' && SB.pieceLv(inst) >= 10) || (lines === 1 && this.has('small_print'));
       // Domino: clears in a row, each made with a different shape from the one before
       if (shape) { this.domChain = shape !== this.domLast ? (this.domChain || 0) + 1 : 1; this.domLast = shape; }
       const lineTypes = rowList.map((r) => new Set(this.grid[r].filter((b) => b && !b.garbage && !b.plain).map((b) => b.shape)).size);
@@ -1164,7 +1164,7 @@
       const linesBefore = this.lines;
       this.lines += lines;
       const info = {
-        rows: rowList, lines, type, tspin: !!tspin && lines > 0, allclear, isTetris, combo: Math.max(0, this.combo), b2b,
+        rows: rowList, lines, type, twist: !!twist && lines > 0, allclear, isQuad, combo: Math.max(0, this.combo), b2b,
         piece: inst || { level: 1, shape: '?' }, shape, cellsN: inst ? SB.SHAPES[inst.shape].n : 4,
         cells, bombed: bombed.length, garbageRows, garbageBlocks: cells.filter((c) => c.b.garbage).length,
         holes, flat, height: Math.min(this.H, heightBefore), level: this.level, elapsed: this.time,
@@ -1197,7 +1197,7 @@
         order.forEach((o, i) => this.later(0.06 + i * 0.045 + Math.random() * 0.03, () => { this.blast(o.x, o.r, 0.6, o.col); if (i % 3 === 0) this.shake = Math.max(this.shake, 5); }));
         this.shake = Math.max(this.shake, 9);
       }
-      if (isTetris || allclear) { SB.audio.play('tetris'); this.shake = 10; } else SB.audio.play('clear', lines);
+      if (isQuad || allclear) { SB.audio.play('quad'); this.shake = 10; } else SB.audio.play('clear', lines);
 
       // post-clear effects
       if (p) this.postClear(info, res, inst);
@@ -1206,10 +1206,10 @@
         let label = '';
         if (allclear) label = 'ALL CLEAR!';
         else if (lines >= 5) label = 'PENTA!';
-        else if (info.tspin) label = 'T-SPIN ' + ['', 'SINGLE', 'DOUBLE', 'TRIPLE', 'TETRIS'][Math.min(4, lines)];
-        else if (lines >= 4) label = 'TETRIS!';
+        else if (info.twist) label = 'TWIST ' + ['', 'SINGLE', 'DOUBLE', 'TRIPLE', 'QUAD'][Math.min(4, lines)];
+        else if (lines >= 4) label = 'QUAD!';
         else if (lines === 3) label = 'TRIPLE';
-        this.emit('clearfx', { rows: rowList, label, score: res.score, lines, big: isTetris || allclear || info.tspin, b2b, combo: info.combo, xm: res.log.some((l) => l.k === 'x') });
+        this.emit('clearfx', { rows: rowList, label, score: res.score, lines, big: isQuad || allclear || info.twist, b2b, combo: info.combo, xm: res.log.some((l) => l.k === 'x') });
         if (released) this.emit('toast', { ico: SB.SPECIALS.temporal.iconKey, text: `Time catches up: ${released} held line${released > 1 ? 's' : ''} clear${released > 1 ? '' : 's'} too` });
       }
       if (this.cellPops.length) { this.emit('cellpops', { pops: this.cellPops }); this.cellPops = []; }
@@ -1232,7 +1232,7 @@
       }
       run.stats.lines += info.lines;
       run.clearCounts[info.type] = (run.clearCounts[info.type] || 0) + 1;
-      if (info.isTetris) { run.stats.tetrises++; if (!this.sandbox) SB.meta.data.tetrises++; }
+      if (info.isQuad) { run.stats.quads++; if (!this.sandbox) SB.meta.data.quads++; }
       if (!this.sandbox && SB.Ach) SB.Ach.onClear(info, res, this);
       // Pinata: every 12th line of the run drops a Glyph
       if (this.has('pinata') && Math.floor(run.stats.lines / 12) > Math.floor((run.stats.lines - info.lines) / 12) && SB.Run.giveRandomGlyph(run)) {
@@ -1243,12 +1243,12 @@
       // curios that keep count of clears (Tension Spring)
       for (const r of run.relics) { const d = SB.RELICS[r.id]; if (d && d.afterClear) d.afterClear(this, info, r); }
       if (info.garbageRows && this.has('compost')) run.compost += 3 * info.garbageRows;
-      if (info.isTetris && this.has('infinite_well')) { SB.Run.levelClear(run, 'tetris', 1); this.emit('toast', { ico: SB.RELICS.infinite_well.iconKey, text: 'Tetris leveled up!' }); }
+      if (info.isQuad && this.has('infinite_well')) { SB.Run.levelClear(run, 'quad', 1); this.emit('toast', { ico: SB.RELICS.infinite_well.iconKey, text: 'Quad leveled up!' }); }
       if (info.allclear && this.has('perfect_storm')) { for (const k of SB.CLEAR_ORDER) SB.Run.levelClear(run, k, 1); this.emit('toast', { ico: SB.RELICS.perfect_storm.iconKey, text: 'Every clear type leveled up!' }); }
-      if (info.isTetris && this.has('bullet_time')) this.bulletUntil = this.time + 3;
+      if (info.isQuad && this.has('bullet_time')) this.bulletUntil = this.time + 3;
       // time back on the clock
       let gain = 0;
-      if (info.isTetris && this.has('borrowed_time')) gain += 10;
+      if (info.isQuad && this.has('borrowed_time')) gain += 10;
       if (this.has('chronoshard')) gain += 2 * info.lines;
       if (this.mod === 'beattheclock') gain += 5 * info.lines;
       if (gain && this.status === 'playing') this.addTime(gain);
@@ -1295,7 +1295,7 @@
           if (filled.length) row[SB.pick(filled)] = null;
         }
       }
-      if (this.isBoss('collector') && info.isTetris) this.addMoney(-1, 'The Collector');
+      if (this.isBoss('collector') && info.isQuad) this.addMoney(-1, 'The Collector');
       this.catalyst = 1;
     }
     cellAtRowKey(c) { return this.cellAt(c.x, c.r); }

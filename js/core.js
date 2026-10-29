@@ -199,7 +199,7 @@ window.SB = window.SB || {};
         case 'move': this.hiss(0.025, 0.05, 0, 2400, 1800, 1.5); this.ping(this.vary(330), 0.03, 0.012); break;
         case 'rotate': this.hiss(0.05, 0.05, 0, 1800, 3200, 1.4); this.ping(this.vary(660), 0.05, 0.02, 0, [[2, 0.3]]); break;
         case 'hold': this.hiss(0.12, 0.06, 0, 900, 2600, 1.2); this.ping(520, 0.12, 0.03); this.ping(780, 0.1, 0.025, 0.05); break;
-        case 'lock': { const o = arg || {}; this.skinLand(SB.Cosmetic ? SB.Cosmetic.skin() : 'classic', o.hard ? 0.55 : 1); if (o.mat) this.matLand(o.mat); break; }
+        case 'lock': { const o = arg || {}; this.skinLand(SB.Cosmetic ? SB.Cosmetic.skin() : 'slab', o.hard ? 0.55 : 1); if (o.mat) this.matLand(o.mat); break; }
         case 'harddrop': { const p = arg || 0.5; this.noise(0.09 + p * 0.06, 0.07 + p * 0.05); this.tone(150, 0.2, 'sine', 0.13, 38); this.tone(70, 0.16, 'square', 0.02 + p * 0.03, 34); break; }
         case 'softtick': this.tone(1100 + Math.min(12, arg || 0) * 45, 0.016, 'triangle', 0.01); break;
         case 'softland': this.tone(260, 0.07, 'triangle', 0.035, 190); break;
@@ -210,7 +210,7 @@ window.SB = window.SB || {};
           this.hiss(0.25, 0.04, 0, 800, 4000, 0.9);
           break;
         }
-        case 'tetris':
+        case 'quad':
           [523, 659, 784, 1046, 1318].forEach((f, i) => this.ping(f, 0.5, 0.05, i * 0.06, [[2, 0.4], [3, 0.15]]));
           this.knock(140, 55, 0.3, 0.1); this.hiss(0.6, 0.06, 0.05, 1200, 8000, 0.8); this.ping(2093, 0.8, 0.02, 0.32, [[1.5, 0.5]]);
           break;
@@ -290,19 +290,25 @@ window.SB = window.SB || {};
   // ---------- Persistent meta progression ----------
   const META_KEY = 'stackbound_meta_v1';
   const RUN_KEY = 'stackbound_run_v1';
+  // saves from before pass 35 used older names for some clear types, stats, curios, achievements and the
+  // dating-game style; rename those keys and ids so old saves load into the new names
+  const OLD_IDS = { tetrises: 'quads', tetris: 'quad', tspin: 'twist', tspins: 'twists', tspinDoubles: 'twistDoubles', first_tetris: 'first_quad',
+    tetris25: 'quad25', tetris_tax: 'quad_tax', tetris_supreme: 'standing_ovation', tetromancer: 'fourcaster', doki: 'sweet' };
+  const OLD_RE = new RegExp('"(' + Object.keys(OLD_IDS).join('|') + ')"', 'g');
+  const migrate = (raw) => (raw ? raw.replace(OLD_RE, (m, k) => '"' + OLD_IDS[k] + '"') : raw);
   SB.meta = {
     data: null,
     defaults() {
       return {
         runs: 0, wins: 0, bestAnte: 0, bestScore: 0,
-        tetrises: 0, consumablesUsed: 0, lines: 0, pushes: 0,
+        quads: 0, consumablesUsed: 0, lines: 0, pushes: 0,
         discovered: {}, stakeWon: {}, unlocked: { architect: true, miner: true },
         settings: { das: 150, arr: 33, sdf: 40, muted: false, volume: 0.6, music: 0.45, shake: true, scorePops: true, touchButtons: false, swipeSens: 3, swipeSlide: true, ver: 4 },
       };
     },
     load() {
       try {
-        const raw = localStorage.getItem(META_KEY);
+        const raw = migrate(localStorage.getItem(META_KEY));
         this.data = Object.assign(this.defaults(), raw ? JSON.parse(raw) : {});
         const saved = this.data.settings || {};
         this.data.settings = Object.assign(this.defaults().settings, saved);
@@ -331,7 +337,7 @@ window.SB = window.SB || {};
   };
   SB.loadRun = function () {
     try {
-      const raw = localStorage.getItem(RUN_KEY);
+      const raw = migrate(localStorage.getItem(RUN_KEY));
       if (!raw) return null;
       const run = JSON.parse(raw);
       if (!run || run.version !== SB.RUN_VERSION) return null;

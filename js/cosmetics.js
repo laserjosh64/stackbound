@@ -11,7 +11,8 @@
     skin: {
       label: 'Piece skins', icon: 'specials',
       items: {
-        classic: { name: 'Classic', price: 0, desc: 'Glossy bevelled blocks' },
+        slab: { name: 'Slab', price: 0, desc: 'Matte slabs, one outline round each piece' },
+        classic: { name: 'Gloss', price: 0, desc: 'Glossy bevelled blocks' },
         pixel: { name: 'Pixel', price: 1, desc: 'Each piece is one 8-bit sprite with a hard outline' },
         toy: { name: 'Toy Brick', price: 2, desc: 'Moulded plastic with studs on top' },
         neon: { name: 'Neon Sign', price: 2, desc: 'A glowing tube traces every piece' },
@@ -75,6 +76,8 @@
     for (const k in RETIRED) if (d.owned[k]) { delete d.owned[k]; d.tickets += RETIRED[k]; C.refunded = (C.refunded || 0) + RETIRED[k]; }
     if (C.refunded) SB.meta.save();
     d.equip = Object.assign({}, d.equip);
+    // pass 35 made Slab the house look; move anyone still on the old default over once
+    if (!d.slabLook) { if (d.equip.skin === 'classic') d.equip.skin = 'slab'; d.slabLook = true; }
     for (const cat of SB.COSMETIC_CATS) {
       const first = Object.keys(SB.COSMETICS[cat].items)[0];
       if (!SB.COSMETICS[cat].items[d.equip[cat]] || !C.owns(cat, d.equip[cat])) d.equip[cat] = first;

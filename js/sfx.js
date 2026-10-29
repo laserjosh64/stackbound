@@ -7,7 +7,7 @@
   SB.COSMETICS.sound = { label: 'Sounds', icon: 'sound', items: {} };
   SB.COSMETIC_CATS.push('sound');
 
-  // register(id, { name, price, desc, art, ach, play: { lock, harddrop, move, rotate, hold, softland, clear, tetris, ... } })
+  // register(id, { name, price, desc, art, ach, play: { lock, harddrop, move, rotate, hold, softland, clear, quad, ... } })
   // play functions get (audio, arg); art is an icon name; ach is the achievement that opens it instead of Tickets
   S.register = function (id, def) {
     S.packs[id] = def;
@@ -18,9 +18,9 @@
   // the pack playing right now: a Listen preview, else the equipped one
   S.current = () => S.override || (SB.Cosmetic ? S.packs[SB.Cosmetic.equipped('sound')] : null);
 
-  // Listen: a short run through the pack (moves, turns, hold, a slam, a double, a Tetris, two clicks)
+  // Listen: a short run through the pack (moves, turns, hold, a slam, a double, a Quad, two clicks)
   const DEMO = [['move', 0, 0], ['move', 0, 0.16], ['rotate', 0, 0.34], ['rotate', 0, 0.5], ['hold', 0, 0.72], ['harddrop', 0.8, 1.02], ['lock', { hard: true }, 1.02],
-    ['clear', 2, 1.5], ['move', 0, 2.25], ['rotate', 0, 2.42], ['harddrop', 1, 2.66], ['lock', { hard: true }, 2.66], ['tetris', 0, 2.95], ['click', 0, 4.2], ['buy', 0, 4.45]];
+    ['clear', 2, 1.5], ['move', 0, 2.25], ['rotate', 0, 2.42], ['harddrop', 1, 2.66], ['lock', { hard: true }, 2.66], ['quad', 0, 2.95], ['click', 0, 4.2], ['buy', 0, 4.45]];
   S.demoLength = 5.2;
   let timers = [];
   S.stopDemo = () => { timers.forEach(clearTimeout); timers = []; };
@@ -66,7 +66,7 @@
       harddrop: (A, p) => { const q = p || 0.5; A.knock(240, 60, 0.13, 0.16 + q * 0.06); A.noise(0.04, 0.06 + q * 0.04); A.ping(1900, 0.05, 0.02, 0, [[2.3, 0.4]]); },
       softland: (A) => A.knock(260, 160, 0.06, 0.06),
       clear: (A, n) => { const k = Math.min(4, n || 1); for (let i = 0; i < k; i++) { A.hiss(0.09, 0.08, i * 0.12, 1400, 2600, 2); A.hiss(0.09, 0.07, i * 0.12 + 0.06, 2600, 1400, 2); } for (let i = 0; i <= k; i++) wood(A, 600 + i * 150, 0.035, 0.05 + i * 0.06); },
-      tetris: (A) => { [0, 0.14, 0.28, 0.42].forEach((d, i) => { A.knock(260 - i * 20, 60, 0.13, 0.15, d); A.noise(0.03, 0.05, d); }); for (let i = 0; i < 4; i++) A.hiss(0.08, 0.09, 0.6 + i * 0.1, i % 2 ? 2600 : 1400, i % 2 ? 1400 : 2600, 2); wood(A, 1400, 0.05, 1.05); wood(A, 1870, 0.05, 1.15); },
+      quad: (A) => { [0, 0.14, 0.28, 0.42].forEach((d, i) => { A.knock(260 - i * 20, 60, 0.13, 0.15, d); A.noise(0.03, 0.05, d); }); for (let i = 0; i < 4; i++) A.hiss(0.08, 0.09, 0.6 + i * 0.1, i % 2 ? 2600 : 1400, i % 2 ? 1400 : 2600, 2); wood(A, 1400, 0.05, 1.05); wood(A, 1870, 0.05, 1.15); },
       click: (A) => wood(A, 1500, 0.026),
       tap: (A) => wood(A, 1900, 0.014),
       hover: (A) => A.hiss(0.01, 0.025, 0, 3500, 3500, 4),
@@ -79,7 +79,7 @@
   });
 
   S.register('drums', {
-    name: 'Drum Kit', price: 2, art: 'drum-kit', desc: 'Hi-hats, rimshots, toms, a kick on every slam and a crash for Tetrises',
+    name: 'Drum Kit', price: 2, art: 'drum-kit', desc: 'Hi-hats, rimshots, toms, a kick on every slam and a crash for Quads',
     play: {
       move: (A) => hat(A, 0.06),
       rotate: (A) => { A.ping(v(A, 1700), 0.03, 0.03, 0, [[2.2, 0.5]]); A.hiss(0.02, 0.08, 0, 3000, 3000, 2); },
@@ -88,7 +88,7 @@
       harddrop: (A, p) => { kick(A, 0.2 + (p || 0.5) * 0.08); snare(A, 0.06); },
       softland: (A) => kick(A, 0.08),
       clear: (A, n) => { const k = Math.min(4, n || 1); for (let i = 0; i <= k; i++) tom(A, 300 - i * 40, 0.12, i * 0.08); hat(A, 0.07, (k + 1) * 0.08, true); },
-      tetris: (A) => { [0, 0.07, 0.14, 0.21, 0.28, 0.35].forEach((d, i) => (i < 3 ? snare(A, 0.08, d) : tom(A, 260 - (i - 3) * 50, 0.13, d))); kick(A, 0.24, 0.45); crash(A, 0.12, 0.45); },
+      quad: (A) => { [0, 0.07, 0.14, 0.21, 0.28, 0.35].forEach((d, i) => (i < 3 ? snare(A, 0.08, d) : tom(A, 260 - (i - 3) * 50, 0.13, d))); kick(A, 0.24, 0.45); crash(A, 0.12, 0.45); },
       click: (A) => A.ping(v(A, 1700), 0.03, 0.026, 0, [[2.2, 0.5]]),
       tap: (A) => hat(A, 0.04),
       hover: (A) => hat(A, 0.015),
@@ -110,7 +110,7 @@
       harddrop: (A, p) => { A.noise(0.06, 0.08 + (p || 0.5) * 0.04); A.knock(180, 60, 0.12, 0.15); A.hiss(0.05, 0.08, 0.03, 1800, 900, 2); },
       softland: (A) => key(A, 0.06),
       clear: (A, n) => { const k = Math.min(4, n || 1); for (let i = 0; i < 3 * k; i++) key(A, 0.07, i * 0.045 + Math.random() * 0.015); },
-      tetris: (A) => { for (let i = 0; i < 8; i++) key(A, 0.07, i * 0.04); A.hiss(0.34, 0.07, 0.36, 1200, 3200, 4); for (let i = 0; i < 6; i++) A.hiss(0.008, 0.06, 0.38 + i * 0.05, 5000, 5000, 4); bell(A, 2700, 1.1, 0.05, 0.72); },
+      quad: (A) => { for (let i = 0; i < 8; i++) key(A, 0.07, i * 0.04); A.hiss(0.34, 0.07, 0.36, 1200, 3200, 4); for (let i = 0; i < 6; i++) A.hiss(0.008, 0.06, 0.38 + i * 0.05, 5000, 5000, 4); bell(A, 2700, 1.1, 0.05, 0.72); },
       click: (A) => key(A, 0.08),
       tap: (A) => key(A, 0.05),
       hover: (A) => A.hiss(0.008, 0.03, 0, 4200, 4200, 4),
@@ -132,7 +132,7 @@
       harddrop: (A, p) => { A.ping(98, 1.4, 0.06 + (p || 0.5) * 0.03, 0, [[1.48, 0.6], [2.1, 0.4], [2.94, 0.25], [4.1, 0.12]]); A.knock(120, 60, 0.12, 0.08); },
       softland: (A) => bell(A, 523, 0.4, 0.02),
       clear: (A, n) => { const k = Math.min(4, n || 1); for (let i = 0; i <= k + 1; i++) bell(A, PENTA[i + 1], 0.9, 0.03, i * 0.07); },
-      tetris: (A) => { for (let i = 0; i < 8; i++) bell(A, PENTA[i], 1.3, 0.032, i * 0.06); A.ping(131, 2, 0.05, 0.1, [[1.48, 0.5], [2.1, 0.35]]); for (let i = 0; i < 6; i++) chime(A, PENTA[2 + (i % 6)] * 2, 0.8, 0.012, 0.6 + i * 0.07); },
+      quad: (A) => { for (let i = 0; i < 8; i++) bell(A, PENTA[i], 1.3, 0.032, i * 0.06); A.ping(131, 2, 0.05, 0.1, [[1.48, 0.5], [2.1, 0.35]]); for (let i = 0; i < 6; i++) chime(A, PENTA[2 + (i % 6)] * 2, 0.8, 0.012, 0.6 + i * 0.07); },
       click: (A) => chime(A, 1760, 0.18, 0.018),
       tap: (A) => chime(A, 2093, 0.12, 0.01),
       hover: (A) => chime(A, 2637, 0.08, 0.004),
@@ -154,7 +154,7 @@
       harddrop: (A, p) => { tock(A, 0.14); A.knock(160, 70, 0.12, 0.1 + (p || 0.5) * 0.05); A.tone(140, 0.1, 'triangle', 0.04, 420, 0.03); A.tone(420, 0.28, 'triangle', 0.03, 260, 0.13); },
       softland: (A) => tock(A, 0.06),
       clear: (A, n) => { const k = Math.min(4, n || 1); A.hiss(0.3 + k * 0.06, 0.05, 0, 900, 1600, 6); for (let i = 0; i < 4 + k * 2; i++) tick(A, 0.06, i * 0.045); A.ping(1568, 0.3, 0.025, 0.2 + k * 0.08); },
-      tetris: (A) => { for (let i = 0; i < 10; i++) tick(A, 0.07, i * 0.04); A.ping(784, 0.32, 0.06, 0.45, [[2, 0.3]]); A.ping(622, 0.45, 0.06, 0.72, [[2, 0.3]]); A.ping(784, 0.32, 0.05, 1.1, [[2, 0.3]]); A.ping(622, 0.45, 0.05, 1.37, [[2, 0.3]]); },
+      quad: (A) => { for (let i = 0; i < 10; i++) tick(A, 0.07, i * 0.04); A.ping(784, 0.32, 0.06, 0.45, [[2, 0.3]]); A.ping(622, 0.45, 0.06, 0.72, [[2, 0.3]]); A.ping(784, 0.32, 0.05, 1.1, [[2, 0.3]]); A.ping(622, 0.45, 0.05, 1.37, [[2, 0.3]]); },
       click: (A) => tick(A, 0.1),
       tap: (A) => tick(A, 0.06),
       hover: (A) => tick(A, 0.025),
@@ -176,7 +176,7 @@
       harddrop: (A, p) => thump(A, 85, 0.1 + (p || 0.5) * 0.04),
       softland: (A) => thump(A, 140, 0.04),
       clear: (A, n) => { const k = Math.min(4, n || 1); for (let i = 0; i <= k; i++) A.ping(262 * Math.pow(1.125, i), 0.35, 0.03, i * 0.08, [[4, 0.1]]); },
-      tetris: (A) => { [262, 330, 392, 523].forEach((f, i) => A.ping(f, 0.9, 0.035, i * 0.05, [[4, 0.1]])); thump(A, 90, 0.08); },
+      quad: (A) => { [262, 330, 392, 523].forEach((f, i) => A.ping(f, 0.9, 0.035, i * 0.05, [[4, 0.1]])); thump(A, 90, 0.08); },
       click: (A) => thump(A, 220, 0.03),
       tap: (A) => thump(A, 260, 0.018),
       hover: (A) => A.hiss(0.015, 0.01, 0, 600, 600, 1),
@@ -189,7 +189,7 @@
   });
 
   S.register('till', {
-    name: 'Till', price: 0, art: 'cash', desc: 'Coins, drawer bells and a ka-ching for every Tetris', ach: true,
+    name: 'Till', price: 0, art: 'cash', desc: 'Coins, drawer bells and a ka-ching for every Quad', ach: true,
     play: {
       move: (A) => coin(A, 2600, 0.012),
       rotate: (A) => { A.hiss(0.014, 0.07, 0, 3600, 3600, 3); coin(A, 3100, 0.01, 0.01); },
@@ -198,7 +198,7 @@
       harddrop: (A, p) => { A.knock(300, 150, 0.06, 0.12); A.noise(0.05, 0.06 + (p || 0.5) * 0.04); A.hiss(0.18, 0.05, 0.04, 800, 300, 1.5); },
       softland: (A) => coin(A, 1800, 0.02),
       clear: (A, n) => { const k = Math.min(4, n || 1); for (let i = 0; i < 3 + k * 2; i++) coin(A, 1800 + Math.random() * 1600, 0.022, i * 0.04 + Math.random() * 0.02); },
-      tetris: (A) => { A.knock(300, 150, 0.05, 0.12); bell(A, 2349, 1.1, 0.05, 0.05); bell(A, 1760, 1.2, 0.04, 0.12); A.hiss(0.2, 0.06, 0.2, 900, 300, 1.5); for (let i = 0; i < 10; i++) coin(A, 1700 + Math.random() * 1800, 0.02, 0.3 + i * 0.04 + Math.random() * 0.02); },
+      quad: (A) => { A.knock(300, 150, 0.05, 0.12); bell(A, 2349, 1.1, 0.05, 0.05); bell(A, 1760, 1.2, 0.04, 0.12); A.hiss(0.2, 0.06, 0.2, 900, 300, 1.5); for (let i = 0; i < 10; i++) coin(A, 1700 + Math.random() * 1800, 0.02, 0.3 + i * 0.04 + Math.random() * 0.02); },
       click: (A) => { A.hiss(0.014, 0.08, 0, 3600, 3600, 3); A.knock(400, 250, 0.03, 0.03); },
       tap: (A) => coin(A, 2800, 0.01),
       hover: (A) => coin(A, 3400, 0.004),
@@ -220,7 +220,7 @@
       harddrop: (A, p) => { A.tone(600, 0.14, 'square', 0.035 + (p || 0.5) * 0.015, 70); A.noise(0.06, 0.05); },
       softland: (A) => A.tone(196, 0.04, 'triangle', 0.04),
       clear: (A, n) => { const k = Math.min(4, n || 1); [523, 659, 784, 1046, 1318].slice(0, k + 1).forEach((f, i) => A.tone(f, 0.08, 'square', 0.03, null, i * 0.055)); },
-      tetris: (A) => { [523, 659, 784, 1046, 784, 1046, 1318, 1568].forEach((f, i) => A.tone(f, 0.09, 'square', 0.03, null, i * 0.07)); A.tone(2093, 0.4, 'square', 0.02, null, 0.6); A.tone(262, 0.6, 'triangle', 0.06, null, 0); },
+      quad: (A) => { [523, 659, 784, 1046, 784, 1046, 1318, 1568].forEach((f, i) => A.tone(f, 0.09, 'square', 0.03, null, i * 0.07)); A.tone(2093, 0.4, 'square', 0.02, null, 0.6); A.tone(262, 0.6, 'triangle', 0.06, null, 0); },
       click: (A) => A.tone(988, 0.03, 'square', 0.018),
       tap: (A) => A.tone(1318, 0.02, 'square', 0.01),
       hover: (A) => A.tone(1760, 0.012, 'square', 0.004),
@@ -242,7 +242,7 @@
       harddrop: (A, p) => { pew(A, 2400, 60, 0.3, 0.025 + (p || 0.5) * 0.01); A.noise(0.12, 0.05); },
       softland: (A) => A.tone(500, 0.05, 'sine', 0.03, 300),
       clear: (A, n) => { const k = Math.min(4, n || 1); for (let i = 0; i <= k; i++) pew(A, 1800 + i * 300, 200, 0.14, 0.018, i * 0.07); },
-      tetris: (A) => { A.tone(200, 0.5, 'sawtooth', 0.02, 2400); A.tone(203, 0.5, 'square', 0.01, 2420); pew(A, 3000, 50, 0.5, 0.03, 0.5); A.noise(0.3, 0.06, 0.5); },
+      quad: (A) => { A.tone(200, 0.5, 'sawtooth', 0.02, 2400); A.tone(203, 0.5, 'square', 0.01, 2420); pew(A, 3000, 50, 0.5, 0.03, 0.5); A.noise(0.3, 0.06, 0.5); },
       click: (A) => A.tone(1500, 0.03, 'sine', 0.02, 2200),
       tap: (A) => A.tone(2000, 0.02, 'sine', 0.012, 2600),
       hover: (A) => A.tone(2600, 0.015, 'sine', 0.004),
@@ -256,7 +256,7 @@
 
   // Hellscape looks: fire, stone and a gong
   S.register('inferno', {
-    name: 'Inferno', price: 0, art: 'flame', desc: 'Crackling fire, stone thuds, roaring clears and a gong for every Tetris', ach: 'hell', secret: true,
+    name: 'Inferno', price: 0, art: 'flame', desc: 'Crackling fire, stone thuds, roaring clears and a gong for every Quad', ach: 'hell', secret: true,
     play: {
       move: (A) => { A.hiss(0.03, 0.05, 0, 3200, 1600, 2); A.knock(v(A, 180), 120, 0.03, 0.016); },
       rotate: (A) => A.hiss(0.09, 0.07, 0, 600, 2800, 1.2),
@@ -265,7 +265,7 @@
       harddrop: (A, p) => { A.knock(70, 34, 0.3, 0.09 + (p || 0.5) * 0.03); A.noise(0.25, 0.07); A.hiss(0.42, 0.06, 0.05, 900, 200, 0.8); A.tone(55, 0.4, 'sine', 0.09, 30); },
       softland: (A) => A.knock(140, 80, 0.06, 0.03),
       clear: (A, n) => { const k = Math.min(4, n || 1); for (let i = 0; i < k; i++) A.hiss(0.26, 0.07, i * 0.07, 400, 2600, 0.9); A.ping(98, 0.6, 0.03, 0, [[2.76, 0.5], [5.4, 0.3]]); },
-      tetris: (A) => { A.ping(65, 1.4, 0.06, 0, [[2.76, 0.6], [5.4, 0.35], [8.9, 0.2]]); A.hiss(0.9, 0.09, 0, 300, 3200, 0.7); A.tone(55, 1.0, 'sawtooth', 0.022, 41); },
+      quad: (A) => { A.ping(65, 1.4, 0.06, 0, [[2.76, 0.6], [5.4, 0.35], [8.9, 0.2]]); A.hiss(0.9, 0.09, 0, 300, 3200, 0.7); A.tone(55, 1.0, 'sawtooth', 0.022, 41); },
       click: (A) => { A.knock(v(A, 600), 300, 0.03, 0.02); A.hiss(0.02, 0.03, 0, 4000, 4000, 3); },
       tap: (A) => A.knock(900, 500, 0.02, 0.012),
       hover: (A) => A.hiss(0.02, 0.01, 0, 5000, 5000, 4),
@@ -287,7 +287,7 @@
       harddrop: (A, p) => { boing(A, 90, 0.05 + (p || 0.5) * 0.02); A.knock(140, 70, 0.1, 0.08); },
       softland: (A) => boing(A, 200, 0.025),
       clear: (A, n) => { const k = Math.min(4, n || 1); for (let i = 0; i <= k; i++) squeak(A, 700 + i * 160, 0.022, i * 0.09); },
-      tetris: (A) => { A.tone(330, 0.24, 'sawtooth', 0.03, 300); A.tone(415, 0.24, 'square', 0.015, 390); A.tone(330, 0.3, 'sawtooth', 0.03, 300, 0.3); A.tone(415, 0.3, 'square', 0.015, 390, 0.3); for (let i = 0; i < 5; i++) squeak(A, 800 + i * 150, 0.02, 0.65 + i * 0.08); },
+      quad: (A) => { A.tone(330, 0.24, 'sawtooth', 0.03, 300); A.tone(415, 0.24, 'square', 0.015, 390); A.tone(330, 0.3, 'sawtooth', 0.03, 300, 0.3); A.tone(415, 0.3, 'square', 0.015, 390, 0.3); for (let i = 0; i < 5; i++) squeak(A, 800 + i * 150, 0.02, 0.65 + i * 0.08); },
       click: (A) => squeak(A, 1300, 0.014),
       tap: (A) => squeak(A, 1600, 0.008),
       hover: (A) => A.tone(2200, 0.02, 'triangle', 0.004, 2600),

@@ -3,12 +3,12 @@
 // garbage, lines it clears send garbage to you, and you score nothing until it tops out. The clock keeps running.
 'use strict';
 (function (SB) {
-  const H = 20, W = 10, COLORS = ['#35e6ff', '#ffd23b', '#b06bff', '#4dff9a', '#ff4d6a', '#ff9a3b', '#4a7aff'];
-  // garbage sent per clear, guideline style: singles send nothing, a Tetris sends 4
+  const H = SB.BOARD_H, W = SB.BOARD_W, COLORS = ['#ff6f91', '#36cfc0', '#ffb340', '#a77bff', '#a3e05a', '#5ba8ff', '#efe6cf'];
+  // garbage sent per clear, the usual table: singles send nothing, a Quad sends 4
   const ATTACK = [0, 0, 1, 2, 4, 5];
-  const TSPIN = [0, 2, 4, 6, 8];
+  const TWIST = [0, 2, 4, 6, 8];
   const COMBO = [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 4, 5];
-  // the Rival is fast but blunt: a single sends half a line, a double or triple 1, a Tetris 2, and it never chains
+  // the Rival is fast but blunt: a single sends half a line, a double or triple 1, a Quad 2, and it never chains
   const RIVAL_ATTACK = [0, 0.5, 1, 1, 2];
 
   // what the rival plays like, from the run's play style (Run.recordStyle)
@@ -21,10 +21,10 @@
       lines: SB.clamp(Math.round(lpc), 1, 4),
     };
   };
-  // what your clear sends: guideline attack plus T-spin, back-to-back and combo bonuses
+  // what your clear sends: base attack plus Twist, repeat and combo bonuses
   SB.clearAttack = (info) => {
     if (info.allclear) return 10;
-    let a = info.tspin ? TSPIN[Math.min(4, info.lines)] : ATTACK[Math.min(5, info.lines)];
+    let a = info.twist ? TWIST[Math.min(4, info.lines)] : ATTACK[Math.min(5, info.lines)];
     if (info.b2b) a += 1;
     a += COMBO[Math.min(COMBO.length - 1, info.combo || 0)];
     return a;

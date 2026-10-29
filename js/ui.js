@@ -23,7 +23,7 @@
     const n = r.n || 0;
     if (id === 'kintsugi') return `Now x${1 + 0.25 * n} Charge`;
     if (id === 'time_capsule') return `Now x${1 + 0.5 * n} Charge`;
-    if (id === 'tension_spring') return `Next Tetris: +${3 * n} Charge`;
+    if (id === 'tension_spring') return `Next Quad: +${3 * n} Charge`;
     if (id === 'receipt') return `Now +${Math.floor((run.lastSpent || 0) / 2)} Charge`;
     if (id === 'hot_streak') return `Next clear of 2+ lines: +${2 * (n + 1)} Charge`;
     if (id === 'ledger') return `Now +${Math.floor(Math.max(0, run.money) / 4)} Charge`;
@@ -61,8 +61,8 @@
   const consMat = (c) => (c.kind === 'glyph' ? (SB.GLYPHS[c.id] && SB.GLYPHS[c.id].mat ? 'one' : null) : c.kind !== 'pattern' && c.kind !== 'secret' && c.id === 'transmute' ? 'all' : null);
   const trackText = (shape) => {
     switch (shape) {
-      case 'I': return 'Lv5: +40 Mass on Tetrises. Lv10: Tetrises with it score x2. Lv15: x2 Charge';
-      case 'T': return 'Lv5: T-Spins +6 Charge. Lv10: T-Spin Triples count as a Tetris. Lv15: x2 Charge';
+      case 'I': return 'Lv5: +40 Mass on Quads. Lv10: Quads with it score x2. Lv15: x2 Charge';
+      case 'T': return 'Lv5: Twists +6 Charge. Lv10: Twist Triples count as a Quad. Lv15: x2 Charge';
       case 'O': return 'Lv5: +$1 when it clears. Lv10: O blocks score double Mass. Lv15: x2 Charge';
       case 'S': case 'Z': return 'Lv5: +4 Charge. Lv10: x1.5 Charge. Lv15: x2 Charge';
       case 'L': case 'J': return 'Lv5: +20 Mass. Lv10: x1.25 Charge. Lv15: x2 Charge';
@@ -241,7 +241,7 @@
     const m = SB.meta.data;
     const saved = SB.loadRun();
     const fresh = m.runs === 0 && !Object.keys(m.tutorial || {}).length;
-    // one column of entries and a cursor that slides between them (UI.mlist), the way Celeste and Hollow Knight do their menus
+    // one column of entries and a cursor that slides between them (UI.mlist)
     const item = (act, ico, label, extra, cls) => `<button class="mitem ${cls || ''}" data-act="${act}"><span class="bi">${SB.uiIco(ico)}</span><span class="mi-label">${label}</span>${extra || ''}</button>`;
     const rec = (v, one, many) => `<span><b>${v}</b> ${v === 1 ? one : many}</span>`;
     return `<canvas id="titleRain"></canvas><div class="title-screen">
@@ -256,7 +256,7 @@
         ${item('prizes', 'prize', 'Prize Counter', `<span class="tix-pill">${SB.uiIco('ticket')} ${SB.Cosmetic.count()}</span>`, 'prize-open')}
         ${item('settings', 'settings', 'Settings')}
       </nav>
-      ${m.runs ? `<div class="records">${rec(m.runs, 'run', 'runs')}${rec(m.wins, 'win', 'wins')}<span>best Floor <b>${m.bestAnte || 0}</b></span><span>best Stack <b>${fmt(m.bestScore || 0)}</b></span>${rec(m.tetrises, 'Tetris', 'Tetrises')}</div>` : ''}</div>
+      ${m.runs ? `<div class="records">${rec(m.runs, 'run', 'runs')}${rec(m.wins, 'win', 'wins')}<span>best Floor <b>${m.bestAnte || 0}</b></span><span>best Stack <b>${fmt(m.bestScore || 0)}</b></span>${rec(m.quads, 'Quad', 'Quads')}</div>` : ''}</div>
     </div>`;
   };
 
@@ -397,7 +397,7 @@
     const cv = $('#titleRain');
     if (!cv) return;
     const ctx = cv.getContext('2d');
-    const keys = SB.TETROMINOES;
+    const keys = SB.CORE_SHAPES;
     const mats = [null, null, null, 'gold', 'glass', 'holo', 'crystal', 'steel', 'lucky'];
     const drops = [];
     const add = (y) => {
@@ -556,7 +556,7 @@
     </div>`;
   };
 
-  // the payout counts itself up the way Balatro's cash-out does: the score climbs, then each line lands with a coin
+  // the payout counts itself up: the score climbs, then each line lands with a coin
   // and adds to the total. A tap anywhere (not on the button) skips to the end; the button works throughout.
   UI.payTally = function () {
     const box = $('#screen .payout');
@@ -651,12 +651,12 @@
     poor: ['Bit short there.', 'Come back richer.', 'Cash first, friend.', 'Window shopping is free.', 'I take cash. Only cash.'],
     poke: ['Hm hm hm.', 'Need anything?', 'Every piece fits somewhere.', 'Careful, the wrench is load-bearing.', 'I rotate on weekends.',
       'Still waiting on a long piece? Me too.', 'T pieces make the best shopkeepers. Fact.', 'Yes, I sharpen my own pencils.',
-      "I don't do refunds. I do Restocks.", 'Some days I miss being a T-Spin.', 'Ow.'],
+      "I don't do refunds. I do Restocks.", 'Some days I miss being a Twist.', 'Ow.'],
     empty: ['Cleaned me out.', 'Shelves are bare.', 'Nothing left but sawdust.', 'Come back next Stack.'],
     hint: ['Curios score left to right. Put your + Charge ones before the x ones.', 'Press the Mass x Charge box mid-Stack to see how a clear added up.',
       'Hold $35 at the end of a Stack and Savings pays the full $5.', 'Each Restock costs a dollar more than the last.',
       'The Forge doubles its price each time you use it here. It resets next visit.', 'Your Bag holds two pieces of each shape, tops.',
-      'One Tetris pays far better than four Singles.', 'Wardens break a rule of Tetris. Check the map before you walk in.',
+      'One Quad pays far better than four Singles.', 'Wardens break one rule of the game. Check the map before you walk in.',
       'Push On for more money, but topping out while pushing ends the run.', 'A Curio Cabinet has better odds of Uncommon and Rare.',
       'Freeze stops gravity and the clock for 6 seconds. Save it for a tight spot.', 'Skipping Stack I or II pays a Token.',
       'Schematics last the whole run.', 'Sell a curio that stopped pulling its weight. Slots are precious.'],
@@ -821,7 +821,7 @@
       ['Stacks won', run.stats.stacksWon],
       ['Best Stack', fmt(run.stats.bestStack), pb && pb.score > 0 && run.stats.bestStack > pb.score],
       ['Lines', run.stats.lines],
-      ['Tetrises', run.stats.tetrises],
+      ['Quads', run.stats.quads],
       ['Pushes', run.stats.pushes],
       ['Seed', esc(run.seedStr)],
     ];
@@ -1080,7 +1080,7 @@
       ${tg('swipeSlide', 'Hold a quick swipe to slide')}
       ${tg('touchButtons', 'On-screen buttons')}` : ''}
       </div>
-      ${SB.Doki && SB.Doki.unlocked() ? `<div class="panel"><h2>Style</h2><label class="set-row"><span>Doki Doki style</span><span class="toggle"><input type="checkbox" data-set="doki" ${SB.Doki.on() ? 'checked' : ''}><i></i></span><b></b></label></div>` : ''}
+      ${SB.Sweet && SB.Sweet.unlocked() ? `<div class="panel"><h2>Style</h2><label class="set-row"><span>Sweetheart style</span><span class="toggle"><input type="checkbox" data-set="sweet" ${SB.Sweet.on() ? 'checked' : ''}><i></i></span><b></b></label></div>` : ''}
       ${UI.touch ? '' : `<div class="panel"><h2>Keys</h2><div id="keysPanel">${UI.keysPanel()}</div></div>`}
       <div class="panel"><h2>Controls</h2>
       <div class="controls">
@@ -1108,10 +1108,10 @@
   UI.screens.help = function () {
     return `<button class="back-top" data-act="title">${SB.glyph('back')} Back</button><div class="help"><h1 class="screen-title">How to play</h1>
       <div class="help-grid">
-        <div><h3>1. Real Tetris</h3><p>Move, rotate, hold, drop, clear lines. Pieces fall forever and speed climbs every 10 lines. If your stack hits the ceiling, the climb is over.</p></div>
-        <div><h3>2. Mass × Charge</h3><p>Every clear scores <b class="chips">Mass</b> × <b class="mult">Charge</b>. Mass is how much you cleared: the clear type plus every block in the line. Charge is how hard it hits. Tetrises, T-Spins and All Clears carry far more of both. Cells, materials and curios pile on more, in a set order: the clear, blocks, board cells, materials, combos, piece levels, then curios left to right. A + adds to the Charge you have at that point and a × multiplies it, so a + that comes after a × is not multiplied. Tap the Mass × Charge box during a Stack to see where your last score came from.</p></div>
+        <div><h3>1. Stack and clear</h3><p>Move, rotate, hold, drop, clear lines. Pieces fall forever and speed climbs every 10 lines. If your stack hits the ceiling, the climb is over.</p></div>
+        <div><h3>2. Mass × Charge</h3><p>Every clear scores <b class="chips">Mass</b> × <b class="mult">Charge</b>. Mass is how much you cleared: the clear type plus every block in the line. Charge is how hard it hits. Quads, Twists and All Clears carry far more of both. Cells, materials and curios pile on more, in a set order: the clear, blocks, board cells, materials, combos, piece levels, then curios left to right. A + adds to the Charge you have at that point and a × multiplies it, so a + that comes after a × is not multiplied. Tap the Mass × Charge box during a Stack to see where your last score came from.</p></div>
         <div><h3>3. Hit the target</h3><p>Each Stack has a score target. Every Stack has a 5:00 clock: reach the target before it runs out. Then play freezes: <b>Bank</b> your winnings, or <b>Push On</b>. A push resets your score to 0, adds 1:00 to the clock and sets a fresh goal (60%, then 90%, then 130% of the target) for bigger rewards. Top out or run out of time while pushing and the run ends.</p></div>
-        <div><h3>4. Climb the Tower</h3><p>The Tower has 8 Floors. Each Floor is Stack I, Stack II and a Warden. Stacks roll a modifier; Wardens break one rule of Tetris. Clear Floor 8 to reach the Summit. You can skip Stack I or II for a Token. In Endless, some Wardens bring a <b>Rival</b>: a stacker that plays a little faster than your best this run. You score nothing until you bury it in garbage.</p></div>
+        <div><h3>4. Climb the Tower</h3><p>The Tower has 8 Floors. Each Floor is Stack I, Stack II and a Warden. Stacks roll a modifier; Wardens break one rule of the game. Clear Floor 8 to reach the Summit. You can skip Stack I or II for a Token. In Endless, some Wardens bring a <b>Rival</b>: a stacker that plays a little faster than your best this run. You score nothing until you bury it in garbage.</p></div>
         <div><h3>5. The Workshop</h3><p>Between Stacks, spend money on <b>Curios</b> (up to 5, they fire left to right), <b>Patterns</b> (level up a clear type), <b>Glyphs</b> (reshape pieces and the board; LIVE ones fire mid-Stack with keys 1-4), <b>Rifts</b> (power with a price), packs, Bag patches and Schematics. Stock changes every visit.</p></div>
         <div><h3>6. The Bag</h3><p>You only get pieces that fit in your Bag. Pieces level up to 15, with a bonus at Lv5, Lv10 and Lv15. Levels last the whole run, except the ones from the Forge special and Gilded Bag cells, which wear off when the Floor ends. Special pieces carry powers like Coin, Drill or Catalyst. A piece holds one Special, one Behaviour and one Material, so a new Material replaces the one it has (you are asked first). Throwing a piece out costs money, more each time.</p></div>
         <div><h3>7. The board remembers</h3><p>Board Packs inscribe cells (Gold, Prism, Echo, Cracked...) onto your board for the whole run. When a line clears through one, a badge pops off it showing what it added. Build where your lines clear.</p></div>
@@ -1423,7 +1423,7 @@
     if (e.label && pops) {
       const el = document.createElement('div');
       el.className = 'fx-label' + (e.big ? ' big' : '');
-      el.innerHTML = esc(e.label) + (e.b2b ? '<small>BACK-TO-BACK</small>' : '');
+      el.innerHTML = esc(e.label) + (e.b2b ? '<small>REPEAT</small>' : '');
       el.style.top = Math.max(40, midY - 30) + 'px';
       fx.appendChild(el);
       setTimeout(() => el.remove(), 1400);
@@ -1565,7 +1565,7 @@
     if (!chipsEl) return;
     const box = $('#tally');
     box.classList.remove('pop'); void box.offsetWidth; box.classList.add('pop');
-    nameEl.innerHTML = `${esc(t.name)}${t.lines > 1 && t.type !== 'tetris' && t.type !== 'double' && t.type !== 'triple' ? ' (' + t.lines + ' lines)' : ''}${t.b2b ? ' <span class="b2b">B2B</span>' : ''}${t.combo > 0 ? ' <span class="combo">Combo ' + t.combo + '</span>' : ''} ${t.locked ? '<b class="tally-score locked">No score until the Rival tops out</b>' : `<b class="tally-score">+${fmt(t.score)}</b>`}`;
+    nameEl.innerHTML = `${esc(t.name)}${t.lines > 1 && t.type !== 'quad' && t.type !== 'double' && t.type !== 'triple' ? ' (' + t.lines + ' lines)' : ''}${t.b2b ? ' <span class="b2b">B2B</span>' : ''}${t.combo > 0 ? ' <span class="combo">Combo ' + t.combo + '</span>' : ''} ${t.locked ? '<b class="tally-score locked">No score until the Rival tops out</b>' : `<b class="tally-score">+${fmt(t.score)}</b>`}`;
     const entries = t.log.slice(-9);
     logEl.innerHTML = entries.map((l, i) => {
       return `<div class="tl ${UI.logCls(l)}" style="animation-delay:${i * 0.055}s"><span>${l.icon || ''} ${esc(l.label)}</span><b>${UI.logVal(l)}</b></div>`;
@@ -1610,9 +1610,9 @@
     const raw = t.raw === undefined ? t.score : t.raw;
     const adj = (t.adj || []).map((a) => `<li class="sl-row adj"><span class="sl-src"><span>${esc(a.label)}</span></span><b class="sl-val">${esc(a.v)}</b><span class="sl-run"></span></li>`).join('')
       + (t.locked ? '<li class="sl-row adj"><span class="sl-src"><span>No score until the Rival tops out</span></span><b class="sl-val">0</b><span class="sl-run"></span></li>' : '');
-    const name = `${esc(t.name)}${t.lines > 1 && !['double', 'triple', 'tetris'].includes(t.type) ? ' (' + t.lines + ' lines)' : ''}`;
+    const name = `${esc(t.name)}${t.lines > 1 && !['double', 'triple', 'quad'].includes(t.type) ? ' (' + t.lines + ' lines)' : ''}`;
     UI.openModal(`<h1>${L ? 'Last Stack' : i === n - 1 ? 'Last score' : 'Earlier score'}</h1>${where}${nav}
-      <div class="sl-head"><b class="sl-name">${name}</b>${t.b2b ? '<span class="b2b">B2B</span>' : ''}${t.combo > 0 ? `<span class="combo">Combo ${t.combo}</span>` : ''}<b class="sl-score">+${fmt(t.score)}</b></div>
+      <div class="sl-head"><b class="sl-name">${name}</b>${t.b2b ? '<span class="b2b">Repeat</span>' : ''}${t.combo > 0 ? `<span class="combo">Combo ${t.combo}</span>` : ''}<b class="sl-score">+${fmt(t.score)}</b></div>
       <ol class="sl-steps">${rows}</ol>
       <div class="sl-sum"><span class="c">${SB.uiIco('mass')}${fmt(t.chips)}</span><i>×</i><span class="m">${SB.uiIco('charge')}${SB.fmtX(t.mult)}</span><i>=</i><b>${fmt(raw)}</b></div>
       ${adj ? `<ol class="sl-steps sl-adj">${adj}</ol>` : ''}
@@ -2072,7 +2072,7 @@
       ${item('pauseBag', 'View Bag &amp; rates')}
       ${item('pauseLevels', 'Run info')}
       ${item('scoreLog', 'Last score')}
-      ${SB.Doki && SB.Doki.unlocked() ? `<button class="mitem" id="dokiBtn" data-act="toggleDoki"><span class="mi-label">Doki Doki style: ${SB.Doki.on() ? 'on' : 'off'}</span></button>` : ''}
+      ${SB.Sweet && SB.Sweet.unlocked() ? `<button class="mitem" id="sweetBtn" data-act="toggleSweet"><span class="mi-label">Sweetheart style: ${SB.Sweet.on() ? 'on' : 'off'}</span></button>` : ''}
       ${item('quitToMenu', 'Main menu', '', UI.tip('<b>Main menu</b><div>Your run is saved from the start of this Stack. Continue from the title screen to replay it.</div>'))}
       ${UI.touch ? `<button class="mitem" id="muteBtn" data-act="toggleMute"><span class="mi-label">${SB.audio.muted ? 'Sound: off' : 'Sound: on'}</span></button><button class="mitem" id="padBtn" data-act="togglePad"><span class="mi-label">${SB.meta.data.settings.touchButtons ? 'Buttons: on' : 'Buttons: off'}</span></button>` : ''}
       ${item('abandon', 'Abandon run', 'danger')}</nav>
@@ -2327,7 +2327,7 @@
     boardCancel: () => { const m = UI.boardMode; UI.modal.onClose = null; UI.closeModal(); if (m && m.onCancel) m.onCancel(); else UI.refresh(); },
     bagRotate: () => UI.bagRotate(),
     toggleMute: () => UI.toggleMute(),
-    toggleDoki: () => { if (!SB.Doki) return; SB.Doki.set(!SB.Doki.on()); const b = document.getElementById('dokiBtn'); if (b) b.innerHTML = `<span class="mi-label">Doki Doki style: ${SB.Doki.on() ? 'on' : 'off'}</span>`; },
+    toggleSweet: () => { if (!SB.Sweet) return; SB.Sweet.set(!SB.Sweet.on()); const b = document.getElementById('sweetBtn'); if (b) b.innerHTML = `<span class="mi-label">Sweetheart style: ${SB.Sweet.on() ? 'on' : 'off'}</span>`; },
     togglePad: () => {
       const st = SB.meta.data.settings;
       st.touchButtons = !st.touchButtons;
@@ -2532,7 +2532,7 @@
   };
 
   // actions with a sound of their own (or none wanted) skip the soft tap every other button makes
-  const QUIET_ACTS = new Set(['tixTap', 'pokeKeeper', 'prizeTab', 'prizeEquip', 'prizeBuy', 'prizeListen', 'prizeSfx', 'toggleMute', 'toggleDoki']);
+  const QUIET_ACTS = new Set(['tixTap', 'pokeKeeper', 'prizeTab', 'prizeEquip', 'prizeBuy', 'prizeListen', 'prizeSfx', 'toggleMute', 'toggleSweet']);
   // ---------- input ----------
   function onKey(e, down) {
     if (down) SB.audio.init();
@@ -2635,7 +2635,7 @@
       else { st[k] = parseFloat(e.target.value); e.target.style.setProperty('--p', ((st[k] - +e.target.min) / (+e.target.max - +e.target.min)) * 100 + '%'); }
       const lab = document.getElementById('set-' + k);
       if (lab) lab.textContent = UI.setLabel(k, st[k]);
-      if (k === 'doki' && SB.Doki) SB.Doki.set(st.doki);
+      if (k === 'sweet' && SB.Sweet) SB.Sweet.set(st.sweet);
       SB.Music.volume = st.music;
       SB.audio.muted = st.muted;
       SB.audio.volume = st.volume;
