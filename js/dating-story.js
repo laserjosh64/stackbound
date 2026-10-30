@@ -284,7 +284,7 @@ isla happy: Front row. Don't be late. I'll know.
 # bad
 @clear
 @bg roof night
-: The roof is empty. Somewhere below, a player cheers for a Tetris.
+: The roof is empty. Somewhere below, a player cheers for a Quad.
 : Her scarf is on the railing where she left it. You keep it for her, just in case.
 @ending bad
 `;
@@ -298,7 +298,7 @@ isla happy: Front row. Don't be late. I'll know.
 @music date
 : The dance studio echoes with a sound like a spinning top. Tessa is in the middle of the floor, going faster and faster.
 @show tessa laugh c
-tessa: Ta-DAAA! Triple T-spin! Did you see? Tell me you saw!
+tessa: Ta-DAAA! Triple Twist! Did you see? Tell me you saw!
 me: I saw. I'm dizzy just from watching.
 tessa happy: Everybody says that! I'm the spinniest piece in the Tower. Ask anyone.
 tessa smug: Elle says you're my scene partner. Lucky you, newbie!
@@ -644,7 +644,7 @@ otto happy: People are kinder than I expect, sometimes.
 @title Friday
 @bg kitchen dusk
 @show otto happy c
-: The day before Clear Day. The kitchen is piled with feast bread: twelve loaves, each one a tetromino.
+: The day before Clear Day. The kitchen is piled with feast bread: twelve loaves, each one a four-block piece.
 otto: I made one more. Just for you.
 : He slides over a tiny square bun. It's exactly your size.
 otto blush: It's a monomino roll. It's the same whichever way you turn it.
@@ -955,16 +955,14 @@ zed pout: Don't read into it.
 : Four Clear Days. Four endings, every one of them happy.
 : You've rehearsed every line with every piece in the club.
 @show elle warm c
-elle: {me}. Can I tell you something strange?
-elle: Sometimes I feel like this week has happened before. More than once.
-elle think: Like someone keeps choosing. And choosing again.
-@glitch
-elle: ...You've been very busy, haven't you?
-elle happy: It's okay! I'm not upset. Honestly, I'm flattered. Everyone in the club adores you.
-elle: But a club should have a style. Something that's ours.
-elle love: So here. A little gift from the president. It makes everything in your Tower a bit more... us.
+elle: {me}. Got a minute? I wanted to say thank you.
+elle: Four plays, four casts, and you showed up for every single one.
+elle think: Most pieces pick one crowd and stick to it. You picked all of us.
+elle happy: Everyone in the club adores you. Even Zed, and he'd never say it.
+elle: So we made you something. A club should have a style. Something that's ours.
+elle love: Here. It makes everything in your Tower a bit more... us.
 @unlock
-elle: Just promise you'll write something nice about me someday.
+elle: Wear it on your next climb. We'll be cheering from the wings.
 elle happy: See you at club!
 @ending finale
 `;

@@ -37,6 +37,96 @@
   const metrics = (S, p, r, i) => ({ p, w: S - 2 * p, r, i, own: true });
 
   const SKINS = {
+    // each piece is one matte slab with a lit top lip, a deep bottom edge and an ink outline
+    // round the whole shape, like the Blockwork panels; seams between its blocks are only just there
+    slab: {
+      edgy: true,
+      paint(c, S, base, e, lead, seed) {
+        const p = Math.max(1, Math.round(S * 0.035)), r = Math.max(1, S * 0.1);
+        const [x0, y0, x1, y1] = inset(S, e, p);
+        c.fillStyle = shade(base, -0.04); body(c, x0, y0, x1, y1, r, e); c.fill();
+        c.save(); body(c, x0, y0, x1, y1, r, e); c.clip();
+        const lip = Math.max(2, Math.round(S * 0.17)), side = Math.max(1, Math.round(S * 0.08)), deep = Math.max(2, Math.round(S * 0.16));
+        c.fillStyle = shade(base, 0.3);
+        if (e & T) c.fillRect(0, y0, S, lip);
+        if (e & L) c.fillRect(x0, 0, side, S);
+        c.fillStyle = shade(base, -0.42);
+        if (e & B) c.fillRect(0, y1 - deep, S, deep);
+        if (e & R) c.fillRect(x1 - side, 0, side, S);
+        // a fine grain in the slab, fixed per colour so the board doesn't shimmer
+        for (let k = 0; k < 7; k++) {
+          c.fillStyle = hash(seed + k * 17 + e) > 0.5 ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)';
+          c.fillRect(hash(seed * 3 + k * 11 + e) * S, hash(seed * 7 + k * 5 + e) * S, Math.max(1, S * 0.06), Math.max(1, S * 0.03));
+        }
+        c.fillStyle = 'rgba(0,0,0,0.12)';
+        if (!(e & L)) c.fillRect(0, 0, 1, S);
+        if (!(e & T)) c.fillRect(0, 0, S, 1);
+        if (lead) { c.fillStyle = shade(base, 0.55); rr(c, S * 0.38, S * 0.36, S * 0.24, S * 0.12, S * 0.05); c.fill(); }
+        c.restore();
+        outlineOuter(c, S, e, x0, y0, x1, y1, r, shade(base, -0.78), Math.max(1.5, S * 0.07));
+        return metrics(S, p, r, S * 0.15);
+      },
+    },
+    // each piece is one sculpted key: a raised face with a sloped skirt round the outside, deeper at the bottom
+    keycap: {
+      edgy: true,
+      paint(c, S, base, e) {
+        const p = Math.max(1, Math.round(S * 0.03)), r = Math.max(1, S * 0.14);
+        const [x0, y0, x1, y1] = inset(S, e, p);
+        c.fillStyle = shade(base, -0.28); body(c, x0, y0, x1, y1, r, e); c.fill();
+        c.save(); body(c, x0, y0, x1, y1, r, e); c.clip();
+        const k = S * 0.13;
+        c.fillStyle = shade(base, -0.12); if (e & L) c.fillRect(x0, 0, k, S); if (e & T) c.fillRect(0, y0, S, k * 0.8);
+        c.fillStyle = shade(base, -0.42); if (e & R) c.fillRect(x1 - k, 0, k, S); if (e & B) c.fillRect(0, y1 - k * 1.7, S, k * 1.7);
+        c.restore();
+        const fx0 = e & L ? x0 + k : 0, fy0 = e & T ? y0 + k * 0.8 : 0, fx1 = e & R ? x1 - k : S, fy1 = e & B ? y1 - k * 1.7 : S;
+        c.fillStyle = shade(base, 0.1); body(c, fx0, fy0, fx1, fy1, r * 0.7, e); c.fill();
+        if (e & T) { c.fillStyle = 'rgba(255,255,255,0.35)'; c.fillRect(fx0 + (e & L ? r * 0.5 : 0), fy0, fx1 - fx0 - (e & L ? r * 0.5 : 0) - (e & R ? r * 0.5 : 0), Math.max(1, S * 0.03)); }
+        outlineOuter(c, S, e, x0, y0, x1, y1, r, shade(base, -0.75), Math.max(1.2, S * 0.05));
+        return metrics(S, p, r, S * 0.17);
+      },
+    },
+    // enamel badge: a dark cast rim round the whole piece holding a smooth fill, with a light catching the top
+    enamel: {
+      edgy: true,
+      paint(c, S, base, e) {
+        const p = Math.max(1, Math.round(S * 0.03)), r = Math.max(1, S * 0.16);
+        const [x0, y0, x1, y1] = inset(S, e, p);
+        const rim = shade(base, -0.72);
+        c.fillStyle = rim; body(c, x0, y0, x1, y1, r, e); c.fill();
+        const f = Math.max(2, S * 0.13);
+        const ex0 = e & L ? x0 + f : 0, ey0 = e & T ? y0 + f : 0, ex1 = e & R ? x1 - f : S, ey1 = e & B ? y1 - f : S;
+        c.fillStyle = shade(base, 0.04); body(c, ex0, ey0, ex1, ey1, r * 0.55, e); c.fill();
+        // the rim's bright bevel on its top and left faces
+        c.fillStyle = 'rgba(255,255,255,0.22)';
+        if (e & T) c.fillRect(x0 + (e & L ? r * 0.6 : 0), y0 + Math.max(1, S * 0.025), (x1 - x0) - (e & L ? r * 0.6 : 0) - (e & R ? r * 0.6 : 0), Math.max(1, S * 0.03));
+        if (e & L) c.fillRect(x0 + Math.max(1, S * 0.025), y0 + (e & T ? r * 0.6 : 0), Math.max(1, S * 0.03), (y1 - y0) - (e & T ? r * 0.6 : 0) - (e & B ? r * 0.6 : 0));
+        // a glint on the enamel
+        if (e & T && e & L) { c.fillStyle = 'rgba(255,255,255,0.4)'; rr(c, ex0 + S * 0.08, ey0 + S * 0.07, S * 0.34, Math.max(1.5, S * 0.06), S * 0.03); c.fill(); }
+        return metrics(S, p, r, S * 0.16);
+      },
+    },
+    // soft and rounded: each piece is one puffy shape, lit from above, no hard outline
+    puffy: {
+      edgy: true,
+      paint(c, S, base, e) {
+        const p = Math.max(1, Math.round(S * 0.05)), r = Math.max(2, S * 0.34);
+        const [x0, y0, x1, y1] = inset(S, e, p);
+        c.fillStyle = base; body(c, x0, y0, x1, y1, r, e); c.fill();
+        c.save(); body(c, x0, y0, x1, y1, r, e); c.clip();
+        const w = Math.max(2, S * 0.12);
+        c.fillStyle = 'rgba(0,0,0,0.16)';
+        if (e & B) c.fillRect(0, y1 - w, S, w);
+        if (e & R) c.fillRect(x1 - w * 0.7, 0, w * 0.7, S);
+        c.fillStyle = 'rgba(255,255,255,0.28)';
+        if (e & T) c.fillRect(0, y0, S, w * 0.6);
+        if (e & L) c.fillRect(x0, 0, w * 0.5, S);
+        c.restore();
+        if (e & T && e & L) { c.fillStyle = 'rgba(255,255,255,0.55)'; c.beginPath(); c.ellipse(x0 + S * 0.3, y0 + S * 0.24, S * 0.11, S * 0.06, -0.5, 0, 7); c.fill(); }
+        outlineOuter(c, S, e, x0, y0, x1, y1, r, 'rgba(0,0,0,0.3)', 1);
+        return metrics(S, p, r, S * 0.2);
+      },
+    },
     // a single sprite per piece: one dark outline round the whole shape, hard highlights, dithered shade
     pixel: {
       edgy: true,

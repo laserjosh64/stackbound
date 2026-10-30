@@ -11,7 +11,11 @@
     skin: {
       label: 'Piece skins', icon: 'specials',
       items: {
-        classic: { name: 'Classic', price: 0, desc: 'Glossy bevelled blocks' },
+        puffy: { name: 'Puffy', price: 0, desc: 'Soft rounded pieces with no hard outline' },
+        slab: { name: 'Slab', price: 0, desc: 'Matte slabs, one outline round each piece' },
+        classic: { name: 'Gloss', price: 0, desc: 'Glossy bevelled blocks' },
+        keycap: { name: 'Keycap', price: 2, desc: 'Each piece is one raised key with a sloped edge' },
+        enamel: { name: 'Enamel', price: 2, desc: 'Enamel pins: a dark rim, a smooth fill and a glint' },
         pixel: { name: 'Pixel', price: 1, desc: 'Each piece is one 8-bit sprite with a hard outline' },
         toy: { name: 'Toy Brick', price: 2, desc: 'Moulded plastic with studs on top' },
         neon: { name: 'Neon Sign', price: 2, desc: 'A glowing tube traces every piece' },
@@ -75,6 +79,8 @@
     for (const k in RETIRED) if (d.owned[k]) { delete d.owned[k]; d.tickets += RETIRED[k]; C.refunded = (C.refunded || 0) + RETIRED[k]; }
     if (C.refunded) SB.meta.save();
     d.equip = Object.assign({}, d.equip);
+    // pass 35 made Puffy the house look; move anyone still on an old default over once
+    if (!d.puffyLook) { if (d.equip.skin === 'classic' || d.equip.skin === 'slab') d.equip.skin = 'puffy'; d.puffyLook = true; }
     for (const cat of SB.COSMETIC_CATS) {
       const first = Object.keys(SB.COSMETICS[cat].items)[0];
       if (!SB.COSMETICS[cat].items[d.equip[cat]] || !C.owns(cat, d.equip[cat])) d.equip[cat] = first;

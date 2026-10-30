@@ -2,16 +2,16 @@
 'use strict';
 (function (SB) {
   // ---------- Piece shapes ----------
-  // cells: [x,y] inside a box (y down). Tetrominoes use SRS spawn states.
+  // cells: [x,y] inside a box (y down). Four-block pieces use their usual spawn states.
   const S = (name, group, rarity, price, color, box, cells) => ({ name, group, rarity, price, color, box, cells });
   SB.SHAPES = {
-    I: S('I', 'Tetromino', 'Starter', 3, '#35e6ff', 4, [[0, 1], [1, 1], [2, 1], [3, 1]]),
-    O: S('O', 'Tetromino', 'Starter', 3, '#ffd83b', 2, [[0, 0], [1, 0], [0, 1], [1, 1]]),
-    T: S('T', 'Tetromino', 'Starter', 3, '#b25cff', 3, [[1, 0], [0, 1], [1, 1], [2, 1]]),
-    S: S('S', 'Tetromino', 'Starter', 3, '#4dff7c', 3, [[1, 0], [2, 0], [0, 1], [1, 1]]),
-    Z: S('Z', 'Tetromino', 'Starter', 3, '#ff4d6a', 3, [[0, 0], [1, 0], [1, 1], [2, 1]]),
-    L: S('L', 'Tetromino', 'Starter', 3, '#ff9a3b', 3, [[2, 0], [0, 1], [1, 1], [2, 1]]),
-    J: S('J', 'Tetromino', 'Starter', 3, '#4f7bff', 3, [[0, 0], [0, 1], [1, 1], [2, 1]]),
+    I: S('I', 'Standard', 'Starter', 3, '#e06c75', 4, [[0, 1], [1, 1], [2, 1], [3, 1]]),
+    O: S('O', 'Standard', 'Starter', 3, '#56b6c2', 2, [[0, 0], [1, 0], [0, 1], [1, 1]]),
+    T: S('T', 'Standard', 'Starter', 3, '#e5c07b', 3, [[1, 0], [0, 1], [1, 1], [2, 1]]),
+    S: S('S', 'Standard', 'Starter', 3, '#c678dd', 3, [[1, 0], [2, 0], [0, 1], [1, 1]]),
+    Z: S('Z', 'Standard', 'Starter', 3, '#98c379', 3, [[0, 0], [1, 0], [1, 1], [2, 1]]),
+    L: S('L', 'Standard', 'Starter', 3, '#61afef', 3, [[2, 0], [0, 1], [1, 1], [2, 1]]),
+    J: S('J', 'Standard', 'Starter', 3, '#d19a66', 3, [[0, 0], [0, 1], [1, 1], [2, 1]]),
     M1: S('Monomino', 'Small', 'Common', 2, '#ff7ad9', 1, [[0, 0]]),
     D2: S('Domino', 'Small', 'Common', 2, '#ff7ad9', 2, [[0, 0], [1, 0]]),
     I3: S('I-Tromino', 'Small', 'Common', 3, '#7af7ff', 3, [[0, 1], [1, 1], [2, 1]]),
@@ -36,7 +36,7 @@
     BIGO: S('Big O', 'Oddity', 'Legendary', 9, '#ffe680', 3, [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1], [0, 2], [1, 2], [2, 2]]),
     CROSS: S('Great Cross', 'Oddity', 'Legendary', 10, '#ff3cff', 5, [[2, 0], [2, 1], [0, 2], [1, 2], [2, 2], [3, 2], [4, 2], [2, 3], [2, 4]]),
   };
-  SB.TETROMINOES = ['I', 'O', 'T', 'S', 'Z', 'L', 'J'];
+  SB.CORE_SHAPES = ['I', 'O', 'T', 'S', 'Z', 'L', 'J'];
 
   // Precompute 4 rotation states (CW) for each shape
   for (const k in SB.SHAPES) {
@@ -54,9 +54,12 @@
   SB.BASE_WEIGHT = 10;
   SB.pieceLv = (p) => Math.max(1, Math.min(SB.MAX_LEVEL, (p.level || 1) + (p.forged || 0)));
   SB.lvTier = (lv) => Math.min(3, Math.floor(lv / 5));
+  // the board every run starts on, before Board Packs, Builders or Stack modifiers change it
+  SB.BOARD_W = 11;
+  SB.BOARD_H = 22;
   SB.LV_COLORS = ['#fff', '#7fd4ff', '#ffd23b', '#ff8af3'];
 
-  // SRS kick tables (converted to screen coords: +y is down)
+  // kick tables (converted to screen coords: +y is down)
   const flip = (t) => t.map(([x, y]) => [x, -y]);
   SB.KICKS_JLSTZ = {
     '0>1': flip([[0, 0], [-1, 0], [-1, 1], [0, -2], [-1, -2]]),
@@ -86,12 +89,12 @@
     single: { name: 'Single', chips: 10, mult: 1, pc: 10, pm: 1, pattern: 'spark' },
     double: { name: 'Double', chips: 30, mult: 2, pc: 20, pm: 1, pattern: 'pair' },
     triple: { name: 'Triple', chips: 60, mult: 3, pc: 25, pm: 2, pattern: 'trine' },
-    tetris: { name: 'Tetris', chips: 100, mult: 5, pc: 40, pm: 2, pattern: 'pillar' },
-    tspin: { name: 'T-Spin', chips: 80, mult: 4, pc: 35, pm: 3, pattern: 'vortex' },
+    quad: { name: 'Quad', chips: 100, mult: 5, pc: 40, pm: 2, pattern: 'pillar' },
+    twist: { name: 'Twist', chips: 80, mult: 4, pc: 35, pm: 3, pattern: 'vortex' },
     allclear: { name: 'All Clear', chips: 150, mult: 8, pc: 60, pm: 4, pattern: 'zenith' },
     penta: { name: 'Penta', chips: 200, mult: 8, pc: 60, pm: 3, pattern: 'pentacle' },
   };
-  SB.CLEAR_ORDER = ['single', 'double', 'triple', 'tetris', 'tspin', 'allclear', 'penta'];
+  SB.CLEAR_ORDER = ['single', 'double', 'triple', 'quad', 'twist', 'allclear', 'penta'];
 
   // ---------- Piece modifiers ----------
   SB.MATERIALS = {
@@ -166,9 +169,9 @@
   SB.BOARD_UPGRADES = {
     well: { name: 'Well Column', desc: 'Pick a column: blocks in it score double mass', rare: false },
     overflow: { name: 'Overflow Lip', desc: 'Once per Stack, a top-out is forgiven by clearing the top of your stack', rare: true },
-    wide: { name: 'Wide Board', desc: 'Board becomes 12 wide. +2 block mass per line, harder to fill', rare: true },
-    narrow: { name: 'Narrow Board', desc: 'Board becomes 8 wide. Easy clears, base clear mass halved', rare: true },
-    tall: { name: 'Tall Board', desc: 'Board becomes 24 rows tall. More room to stack', rare: true },
+    wide: { name: 'Wide Board', desc: 'Board becomes 13 wide. +2 block mass per line, harder to fill', rare: true },
+    narrow: { name: 'Narrow Board', desc: 'Board becomes 9 wide. Easy clears, base clear mass halved', rare: true },
+    tall: { name: 'Tall Board', desc: 'Board becomes 26 rows tall. More room to stack', rare: true },
   };
 
   // ---------- Relics ----------
@@ -177,14 +180,14 @@
   const R = (id, name, icon, rarity, tag, desc, hooks) => Object.assign({ id, name, icon, rarity, tag, desc }, hooks || {});
   const RL = [
     // ----- Common -----
-    R('tetromancer', 'Tetromancer', '', 'Common', 'Clear', '+4 Charge on Tetris clears', { score: (c) => c.info.isTetris && c.mult(4) }),
+    R('fourcaster', 'Fourcaster', '', 'Common', 'Clear', '+4 Charge on Quad clears', { score: (c) => c.info.isQuad && c.mult(4) }),
     R('single_minded', 'Single Minded', '', 'Common', 'Clear', '+4 Charge on Singles', { score: (c) => c.info.lines === 1 && c.mult(4) }),
     R('double_trouble', 'Double Trouble', '', 'Common', 'Clear', '+40 Mass on Doubles', { score: (c) => c.info.lines === 2 && c.chips(40) }),
     R('third_time', 'Third Time', '', 'Common', 'Clear', '+6 Charge on Triples', { score: (c) => c.info.lines === 3 && c.mult(6) }),
-    R('spinner', 'Whirligig', '', 'Common', 'Clear', '+5 Charge on T-Spins', { score: (c) => c.info.tspin && c.mult(5) }),
+    R('spinner', 'Whirligig', '', 'Common', 'Clear', '+5 Charge on Twists', { score: (c) => c.info.twist && c.mult(5) }),
     R('clean_sheet', 'Clean Sheet', '', 'Common', 'Board', '+50 Mass if the board has no holes after the clear', { score: (c) => c.info.holes === 0 && c.chips(50) }),
     R('combo_breaker', 'Combo Breaker', '', 'Common', 'Clear', '+2 Charge per combo step', { score: (c) => c.info.combo > 0 && c.mult(2 * c.info.combo) }),
-    R('back_to_back', 'Back to Back', '', 'Common', 'Clear', '+40 Mass on back-to-back Tetris or T-Spin', { score: (c) => c.info.b2b && c.chips(40) }),
+    R('back_to_back', 'Double Feature', '', 'Common', 'Clear', '+40 Mass on a repeat Quad or Twist', { score: (c) => c.info.b2b && c.chips(40) }),
     R('low_rider', 'Low Rider', '', 'Common', 'Board', '+4 Charge if the clear includes a line in the bottom 4 rows', { score: (c) => c.info.lowestYb < 4 && c.mult(4) }),
     R('high_wire', 'High Wire', '', 'Common', 'Board', '+8 Charge if the clear includes a line in the top 8 rows', { score: (c) => c.info.topFromTop < 8 && c.mult(8) }),
     R('speed_reader', 'Speed Reader', '', 'Common', 'Speed', '+1 Charge per speed level', { score: (c) => c.mult(c.info.level) }),
@@ -233,7 +236,7 @@
     R('ledger', 'Ledger', '', 'Common', 'Gold', '+1 Charge for every $4 you hold', { score: (c) => c.mult(Math.floor(Math.max(0, c.run.money) / 4)) }),
     R('landfill', 'Landfill', '', 'Common', 'Garbage', '+1 Charge per garbage block on the board when you clear', { score: (c) => c.mult(c.game.countBlocks((b) => b.garbage)) }),
     // ----- Uncommon -----
-    R('borrowed_time', 'Borrowed Time', '', 'Uncommon', 'Speed', 'Every Tetris puts 10 seconds back on the clock'),
+    R('borrowed_time', 'Borrowed Time', '', 'Uncommon', 'Speed', 'Every Quad puts 10 seconds back on the clock'),
     R('time_is_money', 'Time is Money', '', 'Uncommon', 'Speed', 'When you Bank, +$1 for every 30 seconds left on the clock (max $5)', { onStackEnd: (run, res) => (res.outcome === 'cash' ? Math.min(5, Math.floor((res.timeLeft || 0) / 30)) : 0) }),
     R('gravedigger', 'Gravedigger', '', 'Uncommon', 'Garbage', 'Garbage blocks score triple block mass'),
     R('lighthouse', 'The Lighthouse', '', 'Uncommon', 'Bag', '+1 preview; x1.5 Charge when the clearing piece matches the next piece', { stat: { previews: 1 }, score: (c) => c.info.shape === c.info.nextShape && c.xmult(1.5) }),
@@ -247,7 +250,7 @@
     R('underdog', 'Underdog', '', 'Uncommon', 'Bag', 'Clears with your lowest-level piece get x2 Mass', { score: (c) => { const min = Math.min(...c.run.pieces.map(SB.pieceLv)); return SB.pieceLv(c.info.piece) <= min && c.xchips(2); } }),
     R('mosaic', 'Mosaic', '', 'Uncommon', 'Board', 'x1.5 Charge if a cleared line holds 4 or more piece types', { score: (c) => Math.max(...c.info.lineTypes) >= 4 && c.xmult(1.5) }),
     R('rainbow_line', 'Rainbow Line', '', 'Uncommon', 'Board', 'x3 Charge if a cleared line holds 6 or more piece types', { score: (c) => Math.max(...c.info.lineTypes) >= 6 && c.xmult(3) }),
-    R('spin_doctor', 'Spin Doctor', '', 'Uncommon', 'Clear', 'Any piece can spin: wedged rotations of any piece count as T-Spins', { stat: { allSpin: 1 } }),
+    R('spin_doctor', 'Spin Doctor', '', 'Uncommon', 'Clear', 'Any piece can spin: wedged rotations of any piece count as Twists', { stat: { allSpin: 1 } }),
     R('all_in', 'Blank Canvas', '', 'Uncommon', 'Clear', 'All Clears give x3 Charge', { score: (c) => c.info.allclear && c.xmult(3) }),
     R('quartermaster', 'Quartermaster', '', 'Uncommon', 'Bag', '+1 Hold slot', { stat: { holdSlots: 1 } }),
     R('vault', 'Vault', '', 'Uncommon', 'Gold', 'Savings pay $1 per $5 instead of $7', { stat: { vault: 1 } }),
@@ -292,9 +295,9 @@
     // pass 27: one curio for winning each Hazard (achievements open them), and Paper Plane from Flutter
     R('still_water', 'Still Water', '', 'Uncommon', 'Speed', 'x2 Charge while the speed level is 3 or lower', { score: (c) => c.info.level <= 3 && c.xmult(2) }),
     R('lean_season', 'Lean Season', '', 'Uncommon', 'Gold', "Skipping a Stack also pays its base reward, plus $2"),
-    R('tension_spring', 'Tension Spring', '', 'Uncommon', 'Clear', '+3 Charge for every clear since your last Tetris, paid out on your next Tetris', {
-      score: (c) => c.info.isTetris && c.relic && c.relic.n > 0 && c.mult(3 * c.relic.n),
-      afterClear: (g, info, r) => { r.n = info.isTetris ? 0 : (r.n || 0) + 1; },
+    R('tension_spring', 'Tension Spring', '', 'Uncommon', 'Clear', '+3 Charge for every clear since your last Quad, paid out on your next Quad', {
+      score: (c) => c.info.isQuad && c.relic && c.relic.n > 0 && c.mult(3 * c.relic.n),
+      afterClear: (g, info, r) => { r.n = info.isQuad ? 0 : (r.n || 0) + 1; },
     }),
     R('receipt', 'Receipt', '', 'Uncommon', 'Gold', '+1 Charge for every $2 you spent in the last Workshop', { score: (c) => c.run.lastSpent >= 2 && c.mult(Math.floor(c.run.lastSpent / 2)) }),
     R('paper_plane', 'Paper Plane', '', 'Uncommon', 'Gravity', '+1 Charge per row the clearing piece fell when hard dropped (max +20)', { score: (c) => c.info.fell > 0 && c.mult(Math.min(20, c.info.fell)) }),
@@ -305,14 +308,14 @@
     R('glass_cannon', 'Glass Cannon', '', 'Rare', 'Glass', 'x3 Charge on clears with Glass; Glass loses a level 1 in 2', { score: (c) => c.info.glassPieces > 0 && c.xmult(3) }),
     R('king_midas', 'King Midas', '', 'Rare', 'Gold', "Every clear gives +$1; you can't hold more than $30", { score: (c) => c.money(1) }),
     R('hedge_fund', 'Hedge Fund', '', 'Rare', 'Gold', 'Savings cap removed', { stat: { noInterestCap: 1 } }),
-    R('tetris_tax', 'Tetris Tax', '', 'Rare', 'Gold', '+$3 per Tetris', { score: (c) => c.info.isTetris && c.money(3) }),
+    R('quad_tax', 'Quad Tax', '', 'Rare', 'Gold', '+$3 per Quad', { score: (c) => c.info.isQuad && c.money(3) }),
     R('living_board', 'Living Board', '', 'Rare', 'Board', 'Each Stack, one random empty cell becomes a Prism cell permanently', { onStackStart: (g) => g.run && SB.Run.livingBoard(g.run) }),
     R('stratosphere', 'Stratosphere', '', 'Rare', 'Gravity', 'The board is 4 rows taller', { stat: { extraRows: 4 } }),
     R('hall_of_fame', 'Hall of Fame', '', 'Rare', 'Clear', 'Your most-used clear type gets x2 Charge', { score: (c) => c.info.type === SB.Run.mostUsedClear(c.run) && c.xmult(2) }),
-    R('tetris_supreme', 'Standing Ovation', '', 'Rare', 'Clear', 'Tetrises retrigger all curios once'),
+    R('standing_ovation', 'Standing Ovation', '', 'Rare', 'Clear', 'Quads retrigger all curios once'),
     R('perfect_storm', 'Perfect Storm', '', 'Rare', 'Clear', 'All Clears level up every clear type by 1'),
     R('adrenaline', 'Adrenaline', '', 'Rare', 'Speed', 'Above speed level 5, x1.5 Charge, plus x0.5 more for each level after', { score: (c) => c.info.level > 5 && c.xmult(1 + 0.5 * (c.info.level - 5)) }),
-    R('bullet_time', 'Bullet Time', '', 'Rare', 'Gravity', 'Gravity pauses for 3 seconds after every Tetris'),
+    R('bullet_time', 'Bullet Time', '', 'Rare', 'Gravity', 'Gravity pauses for 3 seconds after every Quad'),
     R('phoenix_feather', 'Phoenix Feather', '', 'Rare', 'Speed', 'Survive one top-out per run: the top 10 rows of your stack burn away'),
     R('cartographer', 'Cartographer', '', 'Rare', 'Board', 'Each Well column in a cleared line also counts as a Prism cell'),
     R('bribe', 'Bribe', '', 'Uncommon', 'Gold', "On the map, pay $5 to swap the Floor's Warden for a different one (once per Floor)"),
@@ -326,7 +329,7 @@
     R('bookends', 'Bookends', '', 'Rare', 'Clear', 'Your leftmost and rightmost curios score twice'),
     R('blindfold', 'Blindfold', '', 'Rare', 'Board', 'No ghost piece and no next-piece preview; x3 Charge', { score: (c) => c.xmult(3) }),
     R('kintsugi', 'Kintsugi', '', 'Rare', 'Glass', 'Each time Glass cracks: +$2, and this gains x0.25 Charge', { score: (c) => c.relic && c.relic.n > 0 && c.xmult(1 + 0.25 * c.relic.n) }),
-    R('small_print', 'Small Print', '', 'Rare', 'Clear', 'Singles count as Tetrises'),
+    R('small_print', 'Small Print', '', 'Rare', 'Clear', 'Singles count as Quads'),
     R('matching_set', 'Matching Set', '', 'Rare', 'Clear', 'x3 Charge if all your other curios (3 or more) share one tag', { score: (c) => { const o = c.run.relics.filter((r) => r.id !== 'matching_set'); return o.length >= 3 && new Set(o.map((r) => SB.RELICS[r.id].tag)).size === 1 && c.xmult(3); } }),
     R('chameleon', 'Chameleon', '', 'Rare', 'Bag', "Each Stack it takes on the scoring effect of a random curio you don't own", { onStackStart: (g) => SB.Run.chameleon(g.run) }),
     R('hex_ward', 'Hex Ward', '', 'Rare', 'Board', 'Void cells give x2 Charge instead of scoring 0'),
@@ -341,7 +344,7 @@
     R('keystone', 'Keystone', '', 'Rare', 'Clear', 'x3 Charge when it sits with as many curios on its left as on its right', { score: (c) => c.idx >= 0 && c.idx * 2 === c.run.relics.length - 1 && c.xmult(3) }),
     // ----- Legendary -----
     R('blueprint_ghost', 'Schematic Ghost', '', 'Legendary', 'Bag', 'Copies the scoring effect of the curio to its right, twice'),
-    R('infinite_well', 'The Infinite Well', '', 'Legendary', 'Clear', 'Tetris clears level up Tetris by 1'),
+    R('infinite_well', 'The Infinite Well', '', 'Legendary', 'Clear', 'Quad clears level up Quad by 1'),
     R('atlas', 'Atlas', '', 'Legendary', 'Board', 'Multiplies Charge by the number of curios you own (x5 with five)', { score: (c) => c.xmult(c.run.relics.length) }),
     R('clockmaker', 'The Clockmaker', '', 'Legendary', 'Gravity', 'Speed never rises above level 6', { stat: { maxLevel: 6 } }),
     R('omega', 'The Maw', '', 'Legendary', 'Clear', 'x5 Charge; one random other curio is destroyed each Floor', { score: (c) => c.xmult(5) }),
@@ -392,8 +395,8 @@
     spark: { name: 'Spark', clear: 'single', icon: '' },
     pair: { name: 'Pair', clear: 'double', icon: '' },
     trine: { name: 'Trine', clear: 'triple', icon: '' },
-    pillar: { name: 'Pillar', clear: 'tetris', icon: '' },
-    vortex: { name: 'Vortex', clear: 'tspin', icon: '' },
+    pillar: { name: 'Pillar', clear: 'quad', icon: '' },
+    vortex: { name: 'Vortex', clear: 'twist', icon: '' },
     zenith: { name: 'Zenith', clear: 'allclear', icon: '' },
     pentacle: { name: 'Pentacle', clear: 'penta', icon: '' },
     chain: { name: 'Chain', clear: 'combo', icon: '' },
@@ -442,7 +445,7 @@
     mirror: { name: 'The Mirror', icon: '', minAnte: 2, desc: 'Left and right are swapped' },
     thief: { name: 'The Thief', icon: '', minAnte: 2, desc: 'Your leftmost curio is disabled' },
     glutton: { name: 'The Glutton', icon: '', minAnte: 3, desc: 'Your most upgraded piece has a 0% rate' },
-    collector: { name: 'The Collector', icon: '', minAnte: 3, desc: 'Each Tetris costs $1' },
+    collector: { name: 'The Collector', icon: '', minAnte: 3, desc: 'Each Quad costs $1' },
     ghost: { name: 'The Ghost', icon: '', minAnte: 4, desc: 'Locked blocks turn invisible after 4 seconds' },
     weaver: { name: 'The Weaver', icon: '', minAnte: 4, desc: 'Each clear leaves a random hole in the row below it' },
     taxman: { name: 'The Tax Man', icon: '', minAnte: 5, desc: 'Score above the target is halved; Push On is disabled' },
@@ -527,12 +530,12 @@
 
   // ---------- Starters ----------
   SB.STARTERS = {
-    architect: { name: 'The Architect', icon: '', desc: 'The 7 standard tetrominoes at Level 2. Classic Tetris, the tutorial build.', unlock: 'Unlocked' },
+    architect: { name: 'The Architect', icon: '', desc: 'The 7 four-block pieces at Level 2. The plain build the tutorial uses.', unlock: 'Unlocked' },
     miner: { name: 'The Miner', icon: '', desc: 'Gold cells in the bottom 3 rows and +$2 starting money. Dig down, get rich.', unlock: 'Unlocked' },
     glassblower: { name: 'The Glassblower', icon: '', desc: 'Every piece is Glass and Level 3. Huge Charge, shrinking Bag.', unlock: 'Reach Floor 3', check: (m) => m.bestAnte >= 3 },
-    purist: { name: 'The Purist', icon: '', desc: 'Two each of I, O and T at Level 3, plus 2 Pattern levels on Tetris. Narrow and predictable.', unlock: 'Score 25 Tetrises (all runs)', check: (m) => m.tetrises >= 25 },
+    purist: { name: 'The Purist', icon: '', desc: 'Two each of I, O and T at Level 3, plus 2 Pattern levels on Quad. Narrow and predictable.', unlock: 'Score 25 Quads (all runs)', check: (m) => m.quads >= 25 },
     alchemist: { name: 'The Alchemist', icon: '', desc: 'Sand behaviour on S and Z, and a free Glyph to start. Self-filling holes.', unlock: 'Use 12 Pocket items (all runs)', check: (m) => m.consumablesUsed >= 12 },
-    giant: { name: 'The Giant', icon: '', desc: '12-wide board, 7x7 Bag with 4 pentominoes. Big mass, awkward clears.', unlock: 'Reach Floor 5', check: (m) => m.bestAnte >= 5 },
+    giant: { name: 'The Giant', icon: '', desc: '13-wide board, 7x7 Bag with 4 pentominoes. Big mass, awkward clears.', unlock: 'Reach Floor 5', check: (m) => m.bestAnte >= 5 },
     gambler: { name: 'The Gambler', icon: '', desc: 'A random curio each Floor and a random board shape each Floor. Chaos.', unlock: 'Complete 10 Push Ons (all runs)', check: (m) => m.pushes >= 10 },
   };
 
@@ -591,7 +594,7 @@
   SB.STACK_CLOCK = 300;
   // Rival: an Endless Warden Stack modifier (see rival.js). pace = how much faster than your best it plays
   SB.RIVAL = { name: 'Rival', chance: 0.5, pace: 1.06, dig: 0.08, reward: 3,
-    desc: 'A rival stacker plays beside you, a little faster than your best this run. You score nothing until you top it out: doubles and up, T-spins, back-to-backs and combos send it garbage. Its clears send garbage back. The clock keeps running.' };
+    desc: 'A rival stacker plays beside you, a little faster than your best this run. You score nothing until you top it out: doubles and up, Twists, repeats and combos send it garbage. Its clears send garbage back. The clock keeps running.' };
   // Payout tuning: time bonus is $1 per `timeStep` seconds under par (max `timeCap`); Savings is $1 per `savePer` held (max `saveCap`)
   SB.ECON = { timeStep: 18, timeCap: 4, savePer: 7, vaultPer: 5, saveCap: 5 };
 

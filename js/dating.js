@@ -1,6 +1,6 @@
 // Falling for You: the secret dating game. SB.Dating.open({ run, onClose }) puts it over whatever is on screen
 // (the Stack is held while it's open). Four routes, each a week of rehearsals that ends on Clear Day; a true end on
-// all four plays the finale, which unlocks the Doki Doki style (doki.js). Progress lives in meta.data.dating.
+// all four plays the finale, which unlocks the Sweetheart style (sweet.js). Progress lives in meta.data.dating.
 'use strict';
 (function (SB) {
   const Art = SB.DateArt, esc = SB.esc;
@@ -181,7 +181,7 @@
     document.body.classList.remove('dating-open');
     root.remove(); root = null; st = null;
     if (SB.Music && prevMusic) {
-      const song = SB.Doki && SB.Doki.on() ? 'doki' : SB.Cosmetic ? SB.Cosmetic.equipped('song') : prevMusic.song;
+      const song = SB.Sweet && SB.Sweet.on() ? 'sweet' : SB.Cosmetic ? SB.Cosmetic.equipped('song') : prevMusic.song;
       SB.Music.setSong(song, true); SB.Music.setArea(prevMusic.area);
     }
     const UI = SB.UI;
@@ -219,7 +219,7 @@
           ${canCont ? `<button class="dg-btn main" data-dg="continue">Continue</button>` : ''}
           <button class="dg-btn ${canCont ? '' : 'main'}" data-dg="new">${d.seenPrologue ? 'Start over' : 'Start'}</button>
           ${n >= 4 ? `<button class="dg-btn" data-dg="finale">Epilogue</button>` : ''}
-          ${D.styleUnlocked() && SB.Doki ? `<button class="dg-btn style ${SB.Doki.on() ? 'on' : ''}" data-dg="style">${ico('style')} Doki Doki style: ${SB.Doki.on() ? 'on' : 'off'}</button>` : ''}
+          ${D.styleUnlocked() && SB.Sweet ? `<button class="dg-btn style ${SB.Sweet.on() ? 'on' : ''}" data-dg="style">${ico('style')} Sweetheart style: ${SB.Sweet.on() ? 'on' : 'off'}</button>` : ''}
           <button class="dg-btn" data-dg="leave">Leave</button>
         </nav>
         ${d.seenPrologue || SB.FREE_BUILD ? `<div class="dg-routes">${ROUTES.map(routeCard).join('')}</div>` : ''}
@@ -507,8 +507,8 @@
     d.style = true; save();
     if (SB.Ach && SB.Ach.bump) { SB.Ach.bump('fourHearts'); }
     SB.audio.play && SB.audio.play('unlock');
-    const c = card(`<div class="dg-unlock-art">${SB.Doki ? SB.Doki.art() : ''}</div>
-      <div class="dg-end-who">Doki Doki</div><div class="dg-end-kind good">Style unlocked</div>
+    const c = card(`<div class="dg-unlock-art">${SB.Sweet ? SB.Sweet.art() : ''}</div>
+      <div class="dg-end-who">Sweetheart</div><div class="dg-end-kind good">Style unlocked</div>
       <nav class="dg-menu row"><button class="dg-btn main" data-dg="styleon">Wear it</button><button class="dg-btn" data-dg="cardnext">Later</button></nav>`, 'unlock');
     c._next = () => { closeCard(); run(); };
   }
@@ -542,8 +542,8 @@
     pick: (b) => picked(+b.dataset.i),
     nameok: () => { const c = $('.dg-card'); if (c._next) c._next(); },
     cardnext: () => { const c = $('.dg-card'); if (c._next) c._next(); },
-    styleon: () => { if (SB.Doki) SB.Doki.set(true); const c = $('.dg-card'); if (c._next) c._next(); },
-    style: () => { if (SB.Doki) SB.Doki.set(!SB.Doki.on()); showHub(); },
+    styleon: () => { if (SB.Sweet) SB.Sweet.set(true); const c = $('.dg-card'); if (c._next) c._next(); },
+    style: () => { if (SB.Sweet) SB.Sweet.set(!SB.Sweet.on()); showHub(); },
   };
   function onClick(e) {
     e.stopPropagation();

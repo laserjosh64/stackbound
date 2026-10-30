@@ -2,7 +2,7 @@
 'use strict';
 (function (SB) {
   const Rn = (SB.Render = {});
-  // board colours: a style (doki.js) can set Rn.theme.board / .grid; without them these defaults show
+  // board colours: a style (sweet.js) can set Rn.theme.board / .grid; without them these defaults show
   const BOARD_BG = '#0b0b1a', BOARD_GRID = 'rgba(120,120,200,0.08)';
   Rn.theme = {};
 
@@ -74,7 +74,7 @@
   // Edge-aware skins (edgy) get the block's place in its piece, so their sprites are cached per edge and lead.
   const SKINS = {};
   Rn.SKINS = SKINS;
-  const curSkin = () => (SB.Cosmetic ? SB.Cosmetic.skin() : 'classic');
+  const curSkin = () => (SB.Cosmetic ? SB.Cosmetic.skin() : 'puffy');
   Rn.skinEdgy = (skin) => !!(SKINS[skin || curSkin()] && SKINS[skin || curSkin()].edgy);
   const seedOf = (str) => { let h = 7; for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0; return h % 997; };
 
@@ -904,16 +904,14 @@
       const accent = SB.Looks.accent({ spec: p.inst.special, beh: p.inst.behavior });
       if (!g.ghostHidden) {
         const gy = g.ghostY();
-        // the ghost is a faint copy of the piece in the current skin, traced round its outside edge
-        const gcells = p.sh.rots[p.rot], geg = SB.Looks.edges(gcells);
-        gcells.forEach(([cx, cy], i) => {
-          const yy = gy + cy;
-          if (yy >= top) Rn.block(ctx, (p.x + cx) * cs, ry(yy), cs, p.sh.color, { mat: p.inst.mat, edges: geg.flags[i], lead: i === geg.lead, alpha: 0.2 });
-        });
+        // the landing mark: a flat wash of the piece colour inside a dotted chalk line round the shape
+        const gcells = p.sh.rots[p.rot], at = gcells.map(([cx, cy]) => [p.x + cx, gy + cy]);
         ctx.save();
-        ctx.strokeStyle = accent || p.sh.color; ctx.globalAlpha = 0.9; ctx.lineWidth = Math.max(2, cs * 0.06); ctx.lineCap = 'round';
-        if (accent) ctx.setLineDash([cs * 0.18, cs * 0.1]);
-        Rn.traceOutline(ctx, gcells.map(([cx, cy]) => [p.x + cx, gy + cy]), cs, (yy) => ry(yy), top, 2);
+        ctx.fillStyle = rgba(accent || p.sh.color, 0.1);
+        for (const [x, yy] of at) if (yy >= top) ctx.fillRect(x * cs, ry(yy), cs, cs);
+        ctx.strokeStyle = accent || p.sh.color; ctx.globalAlpha = 0.85; ctx.lineWidth = Math.max(2, cs * 0.08); ctx.lineCap = 'round';
+        ctx.setLineDash(accent ? [cs * 0.18, cs * 0.1] : [0.01, Math.max(4, cs * 0.17)]);
+        Rn.traceOutline(ctx, at, cs, (yy) => ry(yy), top, Math.max(2, cs * 0.1));
         ctx.restore();
       }
       Rn.fog(ctx, g, cs, top, w, h); fogged = true;

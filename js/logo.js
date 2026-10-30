@@ -1,5 +1,5 @@
 // Stackbound title logo: STACK over BOUND, every letter built from real falling pieces.
-// Each letter is an exact tiling (tetrominoes, plus one domino where the count needs it), solved so the
+// Each letter is an exact tiling (four-block pieces, plus one domino where the count needs it), solved so the
 // pieces can drop straight down in order. Drawn as one wordmark: dark outline, slab depth, a lit face
 // with faint seams between pieces, and a sheen that sweeps across now and then.
 // Clicking the finished logo fills every gap with fast pieces until the rows are full, clears them,
@@ -67,7 +67,7 @@
         if (!seen.has(key)) { seen.add(key); out.push({ k, cells: n }); }
       }
     };
-    for (const k of SB.TETROMINOES) add(k, SB.SHAPES[k].cells);
+    for (const k of SB.CORE_SHAPES) add(k, SB.SHAPES[k].cells);
     for (const k of ['I3', 'L3', 'D2', 'M1']) add(k, SB.SHAPES[k].cells);
     return out;
   })();
@@ -284,7 +284,7 @@
             st.rowFlash.push({ y: gy, a: (e) => (e < t1 ? 0 : e < t1 + 0.18 ? (e - t1) / 0.18 : Math.max(0, 1 - (e - t1 - 0.18) / 0.25)) });
           }
           st.burstAt = el + (LH - 1) * 0.035 + 0.2;
-          SB.audio.play('tetris');
+          SB.audio.play('quad');
         }
       } else if (st.stage === 'clear' && el >= st.burstAt) {
         st.stage = 'gone';

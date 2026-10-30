@@ -1,26 +1,26 @@
-// The Doki Doki style: unlocked by the true end on all four routes of Falling for You (dating.js). When it's on, the
-// whole game dresses up as a pastel club-room romance: pink paper UI and rounded lettering (html.doki in dating.css),
-// plush pastel pieces with stitched seams (the 'doki' skin), a bouncy piano-and-bells song, and soft cute sounds
+// The Sweetheart style: unlocked by the true end on all four routes of Falling for You (dating.js). When it's on, the
+// whole game dresses up as a pastel storybook romance: pink paper UI and rounded lettering (html.sweet in dating.css),
+// plush pastel pieces with stitched seams (the 'sweet' skin), a bouncy piano-and-bells song, and soft cute sounds
 // (a heartbeat on hard drops). It sits over the Prize Counter picks without changing them; switch it off and they're back.
 'use strict';
 (function (SB) {
-  const K = (SB.Doki = {});
+  const K = (SB.Sweet = {});
   const settings = () => (SB.meta && SB.meta.data && SB.meta.data.settings) || {};
   K.unlocked = () => !!(SB.Dating && SB.Dating.styleUnlocked());
-  K.on = () => K.unlocked() && !!settings().doki;
+  K.on = () => K.unlocked() && !!settings().sweet;
   // what the style puts over the Prize Counter picks
-  const OVER = { skin: 'doki', song: 'doki', clear: 'confetti' };
+  const OVER = { skin: 'sweet', song: 'sweet', clear: 'confetti' };
 
   K.set = function (on) {
     const s = settings();
-    s.doki = !!on && K.unlocked();
+    s.sweet = !!on && K.unlocked();
     if (SB.meta && SB.meta.save) SB.meta.save();
     K.apply();
-    if (SB.audio && SB.audio.play) SB.audio.play(s.doki ? 'equip' : 'tab');
+    if (SB.audio && SB.audio.play) SB.audio.play(s.sweet ? 'equip' : 'tab');
   };
   K.apply = function () {
     const on = K.on();
-    document.documentElement.classList.toggle('doki', on);
+    document.documentElement.classList.toggle('sweet', on);
     // the board well goes plum with soft pink lines; render.js falls back to its own colours when these are unset
     const Rn = SB.Render;
     if (Rn) {
@@ -65,7 +65,7 @@
     c.closePath();
   }
   if (Rn && Rn.SKINS) {
-    Rn.SKINS.doki = {
+    Rn.SKINS.sweet = {
       edgy: true,
       paint(c, S, base, e, lead) {
         const pastel = mix(mix(base, '#ffffff', 0.42), '#ffd3ea', 0.18), edge = mix(base, '#5a1f4f', 0.55);
@@ -107,7 +107,7 @@
 
   // ---------- the song: bright piano, music box and claps (original, in C major) ----------
   if (SB.Dating && SB.Dating.addSong) {
-    SB.Dating.addSong('doki', {
+    SB.Dating.addSong('sweet', {
       bpm: 128, swing: 0.08, feel: 0.006,
       main: [[48, 60, 64, 67], [45, 60, 64, 69], [41, 60, 65, 69], [43, 59, 62, 67]],
       boss: [[48, 60, 63, 67], [44, 60, 63, 68], [46, 58, 62, 65], [43, 59, 62, 67]],
@@ -128,14 +128,14 @@
   if (A) {
     const play = A.play.bind(A), land = A.skinLand.bind(A);
     const beat = (vol, d) => { A.knock(A.vary(78), 46, 0.16, vol, d); A.knock(A.vary(70), 42, 0.2, vol * 0.8, d + 0.17); };
-    const DOKI = {
+    const SWEET = {
       move: () => A.ping(A.vary(1568, 0.02), 0.04, 0.014),
       rotate: () => { A.ping(A.vary(1175, 0.01), 0.07, 0.02); A.ping(A.vary(1568, 0.01), 0.08, 0.016, 0.035); },
       hold: () => { A.hiss(0.16, 0.05, 0, 3000, 1200, 1.2); A.ping(784, 0.12, 0.03, 0.04, [[2, 0.3]]); A.ping(1046, 0.16, 0.026, 0.1); },
       harddrop: () => { beat(0.16, 0); A.hiss(0.06, 0.04, 0, 4000, 2000, 2); },
       softland: () => A.ping(660, 0.07, 0.02),
       clear: (n) => { const sc = [1046, 1175, 1318, 1568, 1760, 2093]; for (let i = 0; i <= Math.min(4, n || 1); i++) A.ping(sc[i], 0.45, 0.04, i * 0.07, [[2, 0.3], [3.01, 0.12]]); A.hiss(0.3, 0.03, 0.05, 6000, 9000, 1.5); },
-      tetris: () => { [1046, 1318, 1568, 2093, 2637, 2093, 2637, 3136].forEach((f, i) => A.ping(f, 0.6, 0.04, i * 0.075, [[2, 0.25]])); beat(0.12, 0.62); },
+      quad: () => { [1046, 1318, 1568, 2093, 2637, 2093, 2637, 3136].forEach((f, i) => A.ping(f, 0.6, 0.04, i * 0.075, [[2, 0.25]])); beat(0.12, 0.62); },
       click: () => { A.ping(A.vary(1318, 0.02), 0.05, 0.026); A.ping(1976, 0.04, 0.012, 0.02); },
       tap: () => A.ping(A.vary(1760, 0.03), 0.035, 0.014),
       hover: () => A.ping(A.vary(2349, 0.02), 0.02, 0.006),
@@ -146,18 +146,18 @@
       topout: () => { [784, 659, 523, 392].forEach((f, i) => A.ping(f, 0.5, 0.04, i * 0.16, [[2, 0.2]])); beat(0.12, 0.7); beat(0.08, 1.2); },
     };
     A.play = function (name, arg) {
-      if (K.on() && DOKI[name] && !this.muted && this.ctx) { DOKI[name](arg); return; }
+      if (K.on() && SWEET[name] && !this.muted && this.ctx) { SWEET[name](arg); return; }
       return play(name, arg);
     };
     // also offered as a sound pack in the Prize Counter
     if (SB.SFX && SB.SFX.register) {
       const pack = {};
-      Object.keys(DOKI).forEach((n) => { pack[n] = (a, x) => DOKI[n](x); });
-      pack.lock = () => A.skinLand('doki', 1);
-      SB.SFX.register('doki', { name: 'Doki Doki', price: 0, desc: 'Bell pings, a heartbeat on every slam and a sparkle run for Tetrises', art: () => K.art(), ach: 'four_hearts', play: pack });
+      Object.keys(SWEET).forEach((n) => { pack[n] = (a, x) => SWEET[n](x); });
+      pack.lock = () => A.skinLand('sweet', 1);
+      SB.SFX.register('sweet', { name: 'Sweetheart', price: 0, desc: 'Bell pings, a heartbeat on every slam and a sparkle run for Quads', art: () => K.art(), ach: 'four_hearts', play: pack });
     }
     A.skinLand = function (skin, k) {
-      if (skin !== 'doki') return land(skin, k);
+      if (skin !== 'sweet') return land(skin, k);
       A.knock(A.vary(300), 180, 0.07, 0.06 * k); A.ping(A.vary(1568, 0.03), 0.06, 0.018 * k); A.hiss(0.04, 0.03 * k, 0, 2400, 1800, 1.5);
     };
   }
